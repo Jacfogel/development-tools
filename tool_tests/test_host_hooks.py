@@ -44,7 +44,7 @@ def test_load_host_backup_manager_raises_when_module_missing(
 def test_load_host_backup_manager_loads_module_inside_project_root(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
-    pkg = tmp_path / "mhmhostbackupok"
+    pkg = tmp_path / "examplehostbackupok"
     pkg.mkdir()
     (pkg / "__init__.py").write_text(
         "class BM:\n"
@@ -58,11 +58,11 @@ def test_load_host_backup_manager_loads_module_inside_project_root(
         encoding="utf-8",
     )
     monkeypatch.syspath_prepend(str(tmp_path))
-    sys.modules.pop("mhmhostbackupok", None)
+    sys.modules.pop("examplehostbackupok", None)
     monkeypatch.setattr(
         "development_tools.config.get_host_config",
         lambda: {
-            "backup_manager_module": "mhmhostbackupok",
+            "backup_manager_module": "examplehostbackupok",
             "backup_manager_attr": "backup_manager",
         },
     )
@@ -79,18 +79,18 @@ def test_load_host_backup_manager_rejects_module_outside_project_root(
     project = tmp_path / "project"
     outside.mkdir()
     project.mkdir()
-    pkg = outside / "mhmhostbackupout"
+    pkg = outside / "examplehostbackupout"
     pkg.mkdir()
     (pkg / "__init__.py").write_text(
         "backup_manager = type('BM', (), {})()\n",
         encoding="utf-8",
     )
     monkeypatch.syspath_prepend(str(outside))
-    sys.modules.pop("mhmhostbackupout", None)
+    sys.modules.pop("examplehostbackupout", None)
     monkeypatch.setattr(
         "development_tools.config.get_host_config",
         lambda: {
-            "backup_manager_module": "mhmhostbackupout",
+            "backup_manager_module": "examplehostbackupout",
             "backup_manager_attr": "backup_manager",
         },
     )

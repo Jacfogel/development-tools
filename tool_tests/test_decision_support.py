@@ -29,7 +29,7 @@ _PROJECT_THRESHOLDS = {
 
 @pytest.fixture
 def project_complexity_thresholds(monkeypatch):
-    """Use MHM project thresholds (100/200/300), not generic config defaults (50/100/200).
+    """Use test fixture thresholds (100/200/300), not generic config defaults (50/100/200).
 
     Patch the module that ``categorize_functions`` is bound to (decision_support may
     hold a reference from an earlier importlib load, not analyze_functions_module).

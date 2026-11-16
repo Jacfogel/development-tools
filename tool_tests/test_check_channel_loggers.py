@@ -140,7 +140,7 @@ def test_main_returns_success_when_no_violations(tmp_path: Path):
 
 @pytest.mark.unit
 def test_example_allowlist_covers_core_logging_infrastructure():
-    """Committed example must allow MHM core files that legitimately import logging."""
+    """Committed example must allow host core files that legitimately import logging."""
     import json
 
     example = (

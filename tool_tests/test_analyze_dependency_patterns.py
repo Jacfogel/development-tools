@@ -203,7 +203,7 @@ def test_find_critical_dependencies_renders_entry_data_and_communication_section
     """Critical dependency rendering should include discovered section headers."""
     analyzer = DependencyPatternAnalyzer()
     actual_imports = {
-        "run_mhm.py": _build_imports_payload(local_modules=["core.config"]),
+        "run_app.py": _build_imports_payload(local_modules=["core.config"]),
         "core/user_data_read.py": _build_imports_payload(local_modules=["core.file_operations"]),
         "communication/message_processing/interaction_manager.py": _build_imports_payload(
             local_modules=["communication.core.channel_orchestrator", "core.logger"]

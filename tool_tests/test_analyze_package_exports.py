@@ -89,7 +89,7 @@ def _make_export_package(temp_path: Path) -> None:
         "def public_func():\n    return 1\n",
         encoding="utf-8",
     )
-    docs_dir = temp_path / "development_docs"
+    docs_dir = temp_path / "development_tools/reports"
     docs_dir.mkdir(parents=True, exist_ok=True)
     (docs_dir / "FUNCTION_REGISTRY_DETAIL.md").write_text(
         "#### `alpha/module.py`\n"

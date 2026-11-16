@@ -663,12 +663,13 @@ def test_write_test_suite_output_file_writes_and_swallows_errors(tmp_path, monke
 def test_get_docs_tree_max_mtime_excludes_generated_reports(tmp_path):
     service = _DummyService(tmp_path)
     real = tmp_path / "development_docs" / "PLANS.md"
-    generated = tmp_path / "development_docs" / "LEGACY_REFERENCE_REPORT.md"
+    generated = tmp_path / "development_tools/reports/LEGACY_REFERENCE_REPORT.md"
     changelog = tmp_path / "ai_development_docs" / "AI_CHANGELOG.md"
     detail = tmp_path / "development_docs" / "CHANGELOG_DETAIL.md"
     real.parent.mkdir(parents=True, exist_ok=True)
     changelog.parent.mkdir(parents=True, exist_ok=True)
     real.write_text("plans", encoding="utf-8")
+    generated.parent.mkdir(parents=True, exist_ok=True)
     generated.write_text("generated", encoding="utf-8")
     changelog.write_text("changelog", encoding="utf-8")
     detail.write_text("detail", encoding="utf-8")

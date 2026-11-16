@@ -154,7 +154,7 @@ This file references an existing file: `core/existing_module.py`
         project_dir = tmp_path / "test_project"
         project_dir.mkdir()
 
-        dev_docs_dir = project_dir / "development_docs"
+        dev_docs_dir = project_dir / "development_tools/reports"
         dev_docs_dir.mkdir(parents=True)
 
         legacy_file = dev_docs_dir / "LEGACY_REFERENCE_REPORT.md"
@@ -172,7 +172,7 @@ This file intentionally references old paths:
                 {
                     "path_drift": {
                         "legacy_documentation_files": [
-                            "development_docs/LEGACY_REFERENCE_REPORT.md"
+                            "development_tools/reports/LEGACY_REFERENCE_REPORT.md"
                         ]
                     }
                 }

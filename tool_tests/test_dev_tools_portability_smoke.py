@@ -14,7 +14,7 @@ _REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
 def _minimal_external_config(*, with_host_package: bool = False) -> dict:
-    """Project config with no MHM package roots / allowlists (portable)."""
+    """Project config with no host package roots / allowlists (portable)."""
     local_prefixes = ["extapp"] if with_host_package else []
     return {
         "project": {
@@ -49,7 +49,7 @@ def _minimal_external_config(*, with_host_package: bool = False) -> dict:
             "standard": {"tools": ["quick_status"]},
             "full": {"tools": ["quick_status"]},
         },
-        # Empty static roots: tools must fall back to full-project scan, not MHM trees.
+        # Empty static roots: tools must fall back to full-project scan, not host-specific trees.
         "static_analysis": {
             "ruff_shard_scan": True,
             "ruff_path_shards": [],
@@ -153,7 +153,7 @@ def test_shared_logging_import_does_not_load_core_modules():
 
 @pytest.mark.unit
 def test_service_uses_minimal_project_config_without_core_package(tmp_path):
-    """AIToolsService should honor supplied project_root config without MHM packages."""
+    """AIToolsService should honor supplied project_root config without host packages."""
     _copy_development_tools_tree(tmp_path)
     service_module = load_development_tools_module("shared.service")
     AIToolsService = service_module.AIToolsService
@@ -191,15 +191,15 @@ def test_minimal_project_runs_read_only_config_status_and_report_paths(tmp_path)
     assert quick_payload["summary"]["status"] == "OK"
     assert quick_payload["details"]["system_health"]["core_files"]["README.md"] == "OK"
 
-    status_doc = service._generate_ai_status_document()
-    priorities_doc = service._generate_ai_priorities_document()
-    assert "run_mhm.py" not in status_doc
-    assert "run_mhm.py" not in priorities_doc
+    status_doc = service._generate_status_brief_document()
+    priorities_doc = service._generate_priorities_brief_document()
+    assert "run_app.py" not in status_doc
+    assert "run_app.py" not in priorities_doc
 
 
 @pytest.mark.unit
 def test_bandit_empty_roots_fallback_scans_external_project_root(tmp_path, monkeypatch):
-    """B-004: empty bandit roots must scan ``.``, not hardcoded MHM package names."""
+    """B-004: empty bandit roots must scan ``.``, not hardcoded host package names."""
     _copy_development_tools_tree(tmp_path, with_host_package=True)
     cfg_path = tmp_path / "development_tools" / "config" / "development_tools_config.json"
     on_disk = json.loads(cfg_path.read_text(encoding="utf-8"))
@@ -229,12 +229,12 @@ def test_bandit_empty_roots_fallback_scans_external_project_root(tmp_path, monke
     # Fallback path when no roots resolve is a single ``.`` scan.
     assert "." in captured[0]
     assert "core" not in captured[0]
-    assert "run_mhm.py" not in captured[0]
+    assert "run_app.py" not in captured[0]
 
 
 @pytest.mark.unit
 def test_ruff_empty_shards_uses_monolithic_scan_on_external_project(tmp_path, monkeypatch):
-    """B-004: empty ruff shards must take monolithic fallback (full project), not MHM trees."""
+    """B-004: empty ruff shards must take monolithic fallback (full project), not host-specific trees."""
     _copy_development_tools_tree(tmp_path, with_host_package=True)
     cfg_path = tmp_path / "development_tools" / "config" / "development_tools_config.json"
     on_disk = json.loads(cfg_path.read_text(encoding="utf-8"))
@@ -281,12 +281,12 @@ def test_copied_devtools_cli_audit_quick_succeeds_on_external_project(tmp_path):
         check=False,
     )
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    assert "run_mhm.py" not in (proc.stdout + proc.stderr)
+    assert "run_app.py" not in (proc.stdout + proc.stderr)
 
 @pytest.mark.unit
 def test_custom_audit_writes_status_under_host_configured_directory(tmp_path, monkeypatch):
     # Exercise production logging while keeping the subprocess confined to tmp_path.
-    monkeypatch.setenv("MHM_TESTING", "0")
+    monkeypatch.setenv("DEVTOOLS_TESTING", "0")
     monkeypatch.delenv("DEV_TOOLS_LOGS_DIR", raising=False)
     monkeypatch.delenv("LOG_AI_DEV_TOOLS_FILE", raising=False)
     destination = _copy_development_tools_tree(tmp_path, with_host_package=True)
@@ -326,7 +326,7 @@ def test_coverage_report_uses_host_paths(tmp_path):
     host_config = _minimal_external_config()
     host_config["coverage"] = {
         "json_dir": "artifacts/snapshots",
-        "detail_report_path": "reports/quality/coverage.md",
+        "detail_report_path": "development_tools/reports/quality/coverage.md",
     }
     config_path.write_text(json.dumps(host_config), encoding="utf-8")
     snapshot = tmp_path / "artifacts" / "snapshots" / "coverage.json"
@@ -344,8 +344,8 @@ def test_coverage_report_uses_host_paths(tmp_path):
     result = service.run_generate_test_coverage_report()
 
     assert result["success"], result
-    report = tmp_path / "reports" / "quality" / "coverage.md"
-    assert "reports/quality/coverage.md" in report.read_text(encoding="utf-8")
+    report = tmp_path / "development_tools/reports/quality/coverage.md"
+    assert "development_tools/reports/quality/coverage.md" in report.read_text(encoding="utf-8")
     assert service._load_coverage_summary()["overall"]["coverage"] == 75.0
 
 
@@ -354,7 +354,7 @@ def test_legacy_report_and_scanner_share_host_paths(tmp_path, monkeypatch):
     monkeypatch.delenv("PYTEST_XDIST_WORKER", raising=False)
     config_path = tmp_path / "host-config.json"
     host_config = _minimal_external_config()
-    report_path = "reports/maintenance/legacy.md"
+    report_path = "development_tools/reports/maintenance/legacy.md"
     inventory_path = "policy/retired.json"
     host_config["legacy_cleanup"] = {
         "detail_report_path": report_path,
@@ -392,13 +392,13 @@ def test_status_reports_use_host_paths_and_link_across_scopes(tmp_path):
     host_config = _minimal_external_config()
     host_config["status"] = {
         "status_files": {
-            "ai_status": "reports/full/overview.md",
-            "ai_priorities": "reports/full/actions.md",
+            "status_brief": "reports/full/overview.md",
+            "priorities_brief": "reports/full/actions.md",
             "consolidated_report": "reports/full/details/summary.md",
         },
         "dev_tools_status_files": {
-            "ai_status": "reports/tools/overview.md",
-            "ai_priorities": "reports/tools/actions.md",
+            "status_brief": "reports/tools/overview.md",
+            "priorities_brief": "reports/tools/actions.md",
             "consolidated_report": "reports/tools/details/summary.md",
         },
     }
@@ -433,7 +433,7 @@ def test_quick_status_and_freshness_read_configured_audit_outputs(tmp_path):
     config_path = host / "host-config.json"
     host_config = _minimal_external_config()
     host_config["quick_audit"] = {"results_file": "artifacts/audit.json"}
-    host_config["status"] = {"status_files": {"ai_status": "artifacts/overview.md"}}
+    host_config["status"] = {"status_files": {"status_brief": "artifacts/overview.md"}}
     config_path.write_text(json.dumps(host_config), encoding="utf-8")
     for name in ("README.md", "requirements.txt"):
         (host / name).touch()

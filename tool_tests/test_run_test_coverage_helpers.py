@@ -92,8 +92,8 @@ def test_configure_test_logging_env_sets_isolated_paths(tmp_path: Path):
 
     updated = regenerator._configure_test_logging_env(env)
 
-    assert updated["MHM_DEV_TOOLS_RUN"] == "0"
-    assert updated["MHM_TESTING"] == "1"
+    assert updated["DEVTOOLS_RUN"] == "0"
+    assert updated["DEVTOOLS_TESTING"] == "1"
     # BACKUP_FORMAT is no longer forced by coverage runs; backups are always directory-based.
     assert "BACKUP_FORMAT" not in updated
     assert "audioop" in updated["PYTHONWARNINGS"]

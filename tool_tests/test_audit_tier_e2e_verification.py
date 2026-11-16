@@ -141,22 +141,22 @@
 #         assert result, "Tier 1 audit should complete successfully"
 
 #         # Verify all 4 output files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         ai_priorities_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         priorities_brief_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
 #         consolidated_report_file = dev_tools_dir / "consolidated_report.md"
 #         analysis_results_file = reports_dir / "analysis_detailed_results.json"
 
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should be generated"
-#         assert ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should be generated"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should be generated"
+#         assert priorities_brief_file.exists(), "PRIORITIES_BRIEF.md should be generated"
 #         assert consolidated_report_file.exists(), "consolidated_report.md should be generated"
 #         assert analysis_results_file.exists(), "analysis_detailed_results.json should be generated"
 
 #         # Verify files have meaningful content
-#         status_content = ai_status_file.read_text()
+#         status_content = status_brief_file.read_text()
 #         assert len(status_content) > 100, "STATUS_BRIEF.md should have substantial content"
 #         assert "Last Generated" in status_content or "Generated" in status_content, "STATUS_BRIEF.md should contain metadata"
 
-#         priorities_content = ai_priorities_file.read_text()
+#         priorities_content = priorities_brief_file.read_text()
 #         assert len(priorities_content) > 50, "PRIORITIES_BRIEF.md should have content"
 
 #         consolidated_content = consolidated_report_file.read_text()
@@ -211,13 +211,13 @@
 #         assert result, "Tier 2 audit should complete successfully"
 
 #         # Verify all 4 output files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         ai_priorities_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         priorities_brief_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
 #         consolidated_report_file = dev_tools_dir / "consolidated_report.md"
 #         analysis_results_file = reports_dir / "analysis_detailed_results.json"
 
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should be generated"
-#         assert ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should be generated"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should be generated"
+#         assert priorities_brief_file.exists(), "PRIORITIES_BRIEF.md should be generated"
 #         assert consolidated_report_file.exists(), "consolidated_report.md should be generated"
 #         assert analysis_results_file.exists(), "analysis_detailed_results.json should be generated"
 
@@ -291,13 +291,13 @@
 #         elapsed_time = time.time() - start_time
 
 #         # Verify all 4 output files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         ai_priorities_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         priorities_brief_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
 #         consolidated_report_file = dev_tools_dir / "consolidated_report.md"
 #         analysis_results_file = reports_dir / "analysis_detailed_results.json"
 
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should be generated"
-#         assert ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should be generated"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should be generated"
+#         assert priorities_brief_file.exists(), "PRIORITIES_BRIEF.md should be generated"
 #         assert consolidated_report_file.exists(), "consolidated_report.md should be generated"
 #         assert analysis_results_file.exists(), "analysis_detailed_results.json should be generated"
 

@@ -21,17 +21,17 @@ logger = get_dev_tools_logger("development_tools")
 from .audit_orchestration import _is_audit_in_progress
 
 
-class AIStatusDocumentMixin:
-    """Mixin providing `_generate_ai_status_document`."""
+class StatusBriefDocumentMixin:
+    """Mixin providing `_generate_status_brief_document`."""
 
-    def _generate_ai_status_document(self) -> str:
+    def _generate_status_brief_document(self) -> str:
         """Generate AI-optimized status document."""
         # Log data source context
         audit_tier = getattr(self, "current_audit_tier", None)
         report_paths = get_status_report_paths(
             self.project_root, dev_tools_only=self._is_dev_tools_scoped_report()
         )
-        report_path = report_paths["ai_status"]
+        report_path = report_paths["status_brief"]
         status_target = report_path.name
         if audit_tier:
             logger.info(
@@ -52,11 +52,11 @@ class AIStatusDocumentMixin:
         if audit_in_progress and not is_legitimate_end_write:
             if not instance_flag:
                 logger.debug(
-                    "_generate_ai_status_document() called from NEW instance during audit! This should only happen at the end."
+                    "_generate_status_brief_document() called from NEW instance during audit! This should only happen at the end."
                 )
             else:
                 logger.debug(
-                    "_generate_ai_status_document() called during audit! This should only happen at the end."
+                    "_generate_status_brief_document() called during audit! This should only happen at the end."
                 )
             import traceback
 
@@ -66,7 +66,7 @@ class AIStatusDocumentMixin:
         if self._is_dev_tools_scoped_report():
             lines.append("# Development Tools Status - Scoped Snapshot")
         else:
-            lines.append("# AI Status - Current Codebase State")
+            lines.append("# Status Brief - Current Codebase State")
         lines.append("")
         display_path = (
             report_path.relative_to(self.project_root)
@@ -87,7 +87,7 @@ class AIStatusDocumentMixin:
             and self.current_audit_tier is None
         ):
             logger.warning(
-                "_generate_ai_status_document() called during audit but current_audit_tier is None!"
+                "_generate_status_brief_document() called during audit but current_audit_tier is None!"
             )
 
         if self.current_audit_tier == 1:
@@ -1163,7 +1163,7 @@ class AIStatusDocumentMixin:
             lines.append(
                 f"- **Example markers (advisory)**: {em_hint_n} hint(s) — path-like lines in "
                 "Example sections without a marker within ±5 lines (see AI_DOCUMENTATION_GUIDE §3.6); "
-                "details in doc-sync JSON / AI_PRIORITIES when triaging"
+                "details in doc-sync JSON / PRIORITIES_BRIEF when triaging"
             )
         else:
             lines.append(
@@ -1535,7 +1535,7 @@ class AIStatusDocumentMixin:
         elif skip_main_tracks:
             lines.append(
                 "- **Overall Coverage**: **Skipped** — this pass used **`audit --full --dev-tools-only`**, "
-                "so full-repo pytest/coverage did not run and `development_docs/TEST_COVERAGE_REPORT.md` "
+                "so full-repo pytest/coverage did not run and `development_tools/reports/TEST_COVERAGE_REPORT.md` "
                 "was not rebuilt. For updated overall %, run "
                 "`python development_tools/run_development_tools.py audit --full` (omit `--dev-tools-only`)."
             )
@@ -1563,7 +1563,7 @@ class AIStatusDocumentMixin:
                     f"    - **Coverage Scope**: Primary domains (`{domains}`); "
                     "`ui`, `tasks`, `notebook` excluded (minimal test coverage). "
                     "`development_tools/` appears with other domains in "
-                    "`development_docs/TEST_COVERAGE_REPORT.md` when the full detailed report is refreshed."
+                    "`development_tools/reports/TEST_COVERAGE_REPORT.md` when the full detailed report is refreshed."
                 )
             else:
                 lines.append(
@@ -1958,7 +1958,7 @@ class AIStatusDocumentMixin:
         prio_ref = (
             "DEV_TOOLS_PRIORITIES"
             if self._is_dev_tools_scoped_report()
-            else "AI_PRIORITIES"
+            else "PRIORITIES_BRIEF"
         )
         if refactor_count > 0:
             lines.append(
@@ -2273,7 +2273,7 @@ class AIStatusDocumentMixin:
             )
             lines.append(
                 "- `python development_tools/run_development_tools.py coverage` - "
-                "Refresh `coverage.json` / `development_docs/TEST_COVERAGE_REPORT.md` / marker analysis"
+                "Refresh `coverage.json` / `development_tools/reports/TEST_COVERAGE_REPORT.md` / marker analysis"
             )
             lines.append(
                 "- `python development_tools/run_development_tools.py status` - Read-only; "

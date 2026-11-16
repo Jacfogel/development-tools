@@ -153,7 +153,7 @@ def _resolved_worker_count(workers_cfg: str | None) -> int:
     import multiprocessing
 
     cpu_count = multiprocessing.cpu_count()
-    if os.environ.get("MHM_TIER3_AUDIT") == "1":
+    if os.environ.get("DEVTOOLS_TIER3_AUDIT") == "1":
         return min(4, max(2, cpu_count // 3))
     return min(6, max(2, cpu_count // 2))
 
@@ -685,9 +685,9 @@ def _invoke_pytest(
         "cwd": str(Path.cwd()),
         "env": {
             **os.environ,
-            # Keep pytest on test loggers; do not inherit audit CLI MHM_TESTING=0.
-            "MHM_TESTING": "1",
-            "MHM_TIER3_AUDIT": "1",
+            # Keep pytest on test loggers; do not inherit audit CLI DEVTOOLS_TESTING=0.
+            "DEVTOOLS_TESTING": "1",
+            "DEVTOOLS_TIER3_AUDIT": "1",
         },
     }
     if os.name == "nt":

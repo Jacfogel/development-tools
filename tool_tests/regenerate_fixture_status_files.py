@@ -28,8 +28,8 @@ def main() -> int:
     generated = generate_consolidated_reports(project_root=str(fixture_root))
 
     source_to_target = {
-        generated["ai_status"]: fixture_root / "STATUS_BRIEF.md",
-        generated["ai_priorities"]: fixture_root / "PRIORITIES_BRIEF.md",
+        generated["status_brief"]: fixture_root / "STATUS_BRIEF.md",
+        generated["priorities_brief"]: fixture_root / "PRIORITIES_BRIEF.md",
         generated["consolidated_report"]: fixture_root / "CONSOLIDATED_REPORT.md",
     }
 

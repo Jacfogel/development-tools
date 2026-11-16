@@ -42,14 +42,14 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
     project_root.mkdir(parents=True, exist_ok=True)
     
     # Create status file paths
-    ai_status_file = project_root / "development_tools" / "STATUS_BRIEF.md"
-    ai_priorities_file = project_root / "development_tools" / "PRIORITIES_BRIEF.md"
+    status_brief_file = project_root / "development_tools" / "STATUS_BRIEF.md"
+    priorities_brief_file = project_root / "development_tools" / "PRIORITIES_BRIEF.md"
     consolidated_file = project_root / "development_tools" / "CONSOLIDATED_REPORT.md"
     
     config_path = None
     if custom_paths:
-        ai_status_file = project_root / "reports" / "overview.md"
-        ai_priorities_file = project_root / "reports" / "actions.md"
+        status_brief_file = project_root / "reports" / "overview.md"
+        priorities_brief_file = project_root / "reports" / "actions.md"
         consolidated_file = project_root / "reports" / "details" / "summary.md"
         config_path = project_root / "host-config.json"
         config_path.write_text(
@@ -59,8 +59,8 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
                         "status_files": {
                             key: path.relative_to(project_root).as_posix()
                             for key, path in (
-                                ("ai_status", ai_status_file),
-                                ("ai_priorities", ai_priorities_file),
+                                ("status_brief", status_brief_file),
+                                ("priorities_brief", priorities_brief_file),
                                 ("consolidated_report", consolidated_file),
                             )
                         }
@@ -71,7 +71,7 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
         )
 
     # Remove any existing status files
-    for f in [ai_status_file, ai_priorities_file, consolidated_file]:
+    for f in [status_brief_file, priorities_brief_file, consolidated_file]:
         if f.exists():
             f.unlink()
     
@@ -93,9 +93,9 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
         patch.object(service, "_check_ascii_compliance", return_value=None),
     )
     with patch.object(
-        service, "_generate_ai_status_document", return_value="# AI Status\n"
+        service, "_generate_status_brief_document", return_value="# Status Brief\n"
     ), patch.object(
-        service, "_generate_ai_priorities_document", return_value="# AI Priorities\n"
+        service, "_generate_priorities_brief_document", return_value="# Priorities Brief\n"
     ), patch.object(
         service, "_generate_consolidated_report", return_value="# Consolidated\n"
     ), no_op_patches[0], no_op_patches[1], no_op_patches[2], no_op_patches[3], no_op_patches[4], no_op_patches[5], no_op_patches[6], no_op_patches[7]:
@@ -114,14 +114,14 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
         assert not (project_root / "development_tools" / "STATUS_BRIEF.md").exists()
 
     # Verify files exist (they should be created even if audit had some failures)
-    assert ai_status_file.exists(), f"STATUS_BRIEF.md should exist after audit. Path: {ai_status_file}"
-    assert ai_priorities_file.exists(), f"PRIORITIES_BRIEF.md should exist after audit. Path: {ai_priorities_file}"
+    assert status_brief_file.exists(), f"STATUS_BRIEF.md should exist after audit. Path: {status_brief_file}"
+    assert priorities_brief_file.exists(), f"PRIORITIES_BRIEF.md should exist after audit. Path: {priorities_brief_file}"
     assert consolidated_file.exists(), f"CONSOLIDATED_REPORT.md should exist after audit. Path: {consolidated_file}"
     
     # Get final modification times
     final_mtimes = {
-        'STATUS_BRIEF.md': ai_status_file.stat().st_mtime,
-        'PRIORITIES_BRIEF.md': ai_priorities_file.stat().st_mtime,
+        'STATUS_BRIEF.md': status_brief_file.stat().st_mtime,
+        'PRIORITIES_BRIEF.md': priorities_brief_file.stat().st_mtime,
         'CONSOLIDATED_REPORT.md': consolidated_file.stat().st_mtime
     }
     
@@ -155,12 +155,12 @@ def test_status_files_not_written_during_tool_execution(tmp_path):
     project_root.mkdir(parents=True, exist_ok=True)
     
     # Create status file paths
-    ai_status_file = project_root / "development_tools" / "STATUS_BRIEF.md"
-    ai_priorities_file = project_root / "development_tools" / "PRIORITIES_BRIEF.md"
+    status_brief_file = project_root / "development_tools" / "STATUS_BRIEF.md"
+    priorities_brief_file = project_root / "development_tools" / "PRIORITIES_BRIEF.md"
     consolidated_file = project_root / "development_tools" / "CONSOLIDATED_REPORT.md"
     
     # Remove any existing status files
-    for f in [ai_status_file, ai_priorities_file, consolidated_file]:
+    for f in [status_brief_file, priorities_brief_file, consolidated_file]:
         if f.exists():
             f.unlink()
     
@@ -176,6 +176,6 @@ def test_status_files_not_written_during_tool_execution(tmp_path):
         service.run_analyze_documentation()
     
     # Verify status files were NOT created by individual tools
-    assert not ai_status_file.exists(), "STATUS_BRIEF.md should not be created by individual tools"
-    assert not ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should not be created by individual tools"
+    assert not status_brief_file.exists(), "STATUS_BRIEF.md should not be created by individual tools"
+    assert not priorities_brief_file.exists(), "PRIORITIES_BRIEF.md should not be created by individual tools"
     assert not consolidated_file.exists(), "CONSOLIDATED_REPORT.md should not be created by individual tools"

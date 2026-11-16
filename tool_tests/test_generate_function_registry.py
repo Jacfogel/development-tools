@@ -556,7 +556,7 @@ class TestRegistryHelpers:
             "entry_points": [
                 {"file": "communication/message_processing/interaction_manager.py", "function": "handle_message"},
                 {"file": "ai/chat/chatbot.py", "function": "generate_response"},
-                {"file": "run_mhm.py", "function": "main"},
+                {"file": "run_app.py", "function": "main"},
             ],
             "data_access": [
                 {"file": "core/user_data_read.py", "function": "get_user_data"},
@@ -703,11 +703,11 @@ def test_report_generators_use_host_paths(tmp_path, monkeypatch, explicit_detail
             "scan_directories": ["src"],
         },
     }
-    registry = f"{detail_dir}/FUNCTION_REGISTRY_DETAIL.md"
-    dependencies = f"{detail_dir}/MODULE_DEPENDENCIES_DETAIL.md"
+    registry = "development_tools/reports/FUNCTION_REGISTRY_DETAIL.md"
+    dependencies = "development_tools/reports/MODULE_DEPENDENCIES_DETAIL.md"
     if explicit_detail_paths:
-        registry = "overrides/Function registry.md"
-        dependencies = "overrides/Module dependencies.md"
+        registry = "development_tools/overrides/Function registry.md"
+        dependencies = "development_tools/overrides/Module dependencies.md"
         settings["analyze_function_registry"] = {"registry_path": registry}
         settings["analyze_module_dependencies"] = {"dependency_doc_path": dependencies}
     config_file = tmp_path / "host-settings.json"
@@ -719,8 +719,8 @@ def test_report_generators_use_host_paths(tmp_path, monkeypatch, explicit_detail
         assert result["success"], result
 
     pairs = (
-        (registry, f"{ai_dir}/AI_FUNCTION_REGISTRY.md", "Function Registry"),
-        (dependencies, f"{ai_dir}/AI_MODULE_DEPENDENCIES.md", "Module Dependencies"),
+        (registry, "development_tools/reports/FUNCTION_REGISTRY_BRIEF.md", "Function Registry"),
+        (dependencies, "development_tools/reports/MODULE_DEPENDENCIES_BRIEF.md", "Module Dependencies"),
     )
     for detail, summary, title in pairs:
         detail_content = (tmp_path / detail).read_text(encoding="utf-8")
@@ -729,9 +729,9 @@ def test_report_generators_use_host_paths(tmp_path, monkeypatch, explicit_detail
         assert f"> **File**: `{detail}`" in detail_content
         assert f"> **File**: `{summary}`" in summary_content
         target = (
-            f"../../{detail.replace(' ', '%20')}"
+            f"../overrides/{detail.rsplit('/', 1)[-1].replace(' ', '%20')}"
             if explicit_detail_paths
-            else f"../detail/{detail.split('/')[-1]}"
+            else detail.rsplit("/", 1)[-1]
         )
         assert f"]({target})" in summary_content
 

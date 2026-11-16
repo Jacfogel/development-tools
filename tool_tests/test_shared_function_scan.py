@@ -40,7 +40,7 @@ def test_shared_scan_parses_each_file_once(tmp_path: Path, monkeypatch):
     pkg.mkdir()
     (pkg / "__init__.py").write_text("def helper():\n    return 1\n", encoding="utf-8")
     (pkg / "mod.py").write_text("def work():\n    helper()\n", encoding="utf-8")
-    (tmp_path / "run_mhm.py").write_text("def main():\n    return 0\n", encoding="utf-8")
+    (tmp_path / "run_app.py").write_text("def main():\n    return 0\n", encoding="utf-8")
 
     reads = {"n": 0}
     original_read = Path.read_text

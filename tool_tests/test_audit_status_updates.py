@@ -24,7 +24,7 @@ from development_tools.shared.service import AIToolsService
 
 @pytest.mark.unit
 def test_quick_audit_writes_each_core_status_file_once(tmp_path, monkeypatch):
-    """AI_STATUS, AI_PRIORITIES, and CONSOLIDATED each receive exactly one create_output_file call."""
+    """STATUS_BRIEF, PRIORITIES_BRIEF, and CONSOLIDATED each receive exactly one create_output_file call."""
     # Patch the same module object `run_audit` uses (avoids duplicate importlib copies in full suites).
     monkeypatch.setattr(
         audit_orch,
@@ -39,9 +39,9 @@ def test_quick_audit_writes_each_core_status_file_once(tmp_path, monkeypatch):
 
     service = AIToolsService(project_root=str(proj))
     patches = [
-        patch.object(service, "_generate_ai_status_document", return_value="# AI Status\n"),
+        patch.object(service, "_generate_status_brief_document", return_value="# Status Brief\n"),
         patch.object(
-            service, "_generate_ai_priorities_document", return_value="# AI Priorities\n"
+            service, "_generate_priorities_brief_document", return_value="# Priorities Brief\n"
         ),
         patch.object(service, "_generate_consolidated_report", return_value="# Consolidated\n"),
         patch.object(service, "_run_quick_audit_tools", return_value=True),
@@ -67,8 +67,8 @@ def test_quick_audit_writes_each_core_status_file_once(tmp_path, monkeypatch):
     # (Do not wrap create_output_file — coverage/subprocess runs can bind a different module copy.)
     out = proj / "development_tools"
     for name, prefix in (
-        ("STATUS_BRIEF.md", "# AI Status"),
-        ("PRIORITIES_BRIEF.md", "# AI Priorities"),
+        ("STATUS_BRIEF.md", "# Status Brief"),
+        ("PRIORITIES_BRIEF.md", "# Priorities Brief"),
         ("CONSOLIDATED_REPORT.md", "# Consolidated"),
     ):
         path = out / name

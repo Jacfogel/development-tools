@@ -135,8 +135,8 @@
 #         service.run_analyze_legacy_references = MagicMock(side_effect=mock_tool('analyze_legacy_references'))
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run quick audit
@@ -193,8 +193,8 @@
 #         service.run_analyze_legacy_references = MagicMock(side_effect=mock_tool('analyze_legacy_references'))
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run standard audit
@@ -253,8 +253,8 @@
 #         service.run_generate_legacy_reference_report = MagicMock(side_effect=mock_tool('generate_legacy_reference_report'))
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run full audit
@@ -315,8 +315,8 @@
 #         service.run_analyze_function_registry = MagicMock(side_effect=mock_tool('analyze_function_registry'))
 #         service.run_analyze_package_exports = MagicMock(side_effect=mock_tool('analyze_package_exports'))
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run standard audit (Tier 2)
@@ -367,8 +367,8 @@
 #         service.run_generate_legacy_reference_report = MagicMock(side_effect=mock_tool('generate_legacy_reference_report'))
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run full audit (Tier 3)
@@ -416,8 +416,8 @@
 #         service.run_decision_support = MagicMock(side_effect=mock_tool)
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run quick audit
@@ -438,16 +438,16 @@
 #             return False
         
 #         # Verify all 4 output files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         ai_priorities_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         priorities_brief_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
 #         consolidated_report_file = dev_tools_dir / "consolidated_report.md"
 #         analysis_results_file = reports_dir / "analysis_detailed_results.json"
         
 #         # Also check alternative location (in case path resolution differs)
 #         analysis_results_file_alt = temp_project_copy / "development_tools" / "reports" / "analysis_detailed_results.json"
         
-#         assert wait_for_file(ai_status_file), f"STATUS_BRIEF.md should be generated by Tier 1: {ai_status_file}"
-#         assert wait_for_file(ai_priorities_file), f"PRIORITIES_BRIEF.md should be generated by Tier 1: {ai_priorities_file}"
+#         assert wait_for_file(status_brief_file), f"STATUS_BRIEF.md should be generated by Tier 1: {status_brief_file}"
+#         assert wait_for_file(priorities_brief_file), f"PRIORITIES_BRIEF.md should be generated by Tier 1: {priorities_brief_file}"
 #         assert wait_for_file(consolidated_report_file), f"consolidated_report.md should be generated by Tier 1: {consolidated_report_file}"
         
 #         # Check both possible locations for analysis_detailed_results.json
@@ -464,8 +464,8 @@
 #                 )
         
 #         # Verify files have content
-#         assert len(ai_status_file.read_text()) > 0, "STATUS_BRIEF.md should have content"
-#         assert len(ai_priorities_file.read_text()) > 0, "PRIORITIES_BRIEF.md should have content"
+#         assert len(status_brief_file.read_text()) > 0, "STATUS_BRIEF.md should have content"
+#         assert len(priorities_brief_file.read_text()) > 0, "PRIORITIES_BRIEF.md should have content"
 #         assert len(consolidated_report_file.read_text()) > 0, "consolidated_report.md should have content"
         
 #         # Verify analysis_detailed_results.json has correct structure
@@ -513,8 +513,8 @@
 #         service.run_analyze_function_registry = MagicMock(side_effect=mock_tool)
 #         service.run_analyze_package_exports = MagicMock(side_effect=mock_tool)
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Ensure _save_audit_results_aggregated is not mocked so it actually creates the file
@@ -526,13 +526,13 @@
 #             service.run_audit(quick=False, full=False)
         
 #         # Verify all 4 output files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         ai_priorities_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         priorities_brief_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
 #         consolidated_report_file = dev_tools_dir / "consolidated_report.md"
 #         analysis_results_file = reports_dir / "analysis_detailed_results.json"
         
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should be generated by Tier 2"
-#         assert ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should be generated by Tier 2"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should be generated by Tier 2"
+#         assert priorities_brief_file.exists(), "PRIORITIES_BRIEF.md should be generated by Tier 2"
 #         assert consolidated_report_file.exists(), "consolidated_report.md should be generated by Tier 2"
 #         assert analysis_results_file.exists(), "analysis_detailed_results.json should be generated by Tier 2"
         
@@ -579,8 +579,8 @@
 #         service.run_generate_legacy_reference_report = MagicMock(side_effect=mock_tool)
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run full audit
@@ -588,13 +588,13 @@
 #             service.run_audit(quick=False, full=True)
         
 #         # Verify all 4 output files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         ai_priorities_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         priorities_brief_file = dev_tools_dir / "PRIORITIES_BRIEF.md"
 #         consolidated_report_file = dev_tools_dir / "consolidated_report.md"
 #         analysis_results_file = reports_dir / "analysis_detailed_results.json"
         
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should be generated by Tier 3"
-#         assert ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should be generated by Tier 3"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should be generated by Tier 3"
+#         assert priorities_brief_file.exists(), "PRIORITIES_BRIEF.md should be generated by Tier 3"
 #         assert consolidated_report_file.exists(), "consolidated_report.md should be generated by Tier 3"
 #         assert analysis_results_file.exists(), "analysis_detailed_results.json should be generated by Tier 3"
         
@@ -736,8 +736,8 @@
 #         service.run_decision_support = MagicMock(side_effect=lambda *args, **kwargs: mock_tool_with_save('decision_support', 'reports', *args, **kwargs))
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Track if _save_audit_results_aggregated is called and catch any exceptions
@@ -875,8 +875,8 @@
 #         service.run_decision_support = MagicMock(side_effect=mock_tool)
         
 #         # Mock report generation
-#         service._generate_ai_status_document = MagicMock(return_value="# AI Status\n\nTest")
-#         service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities\n\nTest")
+#         service._generate_status_brief_document = MagicMock(return_value="# Status Brief\n\nTest")
+#         service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief\n\nTest")
 #         service._generate_consolidated_report = MagicMock(return_value="Test Report")
         
 #         # Run audit first time
@@ -884,11 +884,11 @@
 #             service.run_audit(quick=True)
         
 #         # Verify files exist
-#         ai_status_file = dev_tools_dir / "STATUS_BRIEF.md"
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should exist after first run"
+#         status_brief_file = dev_tools_dir / "STATUS_BRIEF.md"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should exist after first run"
         
 #         # Get initial content
-#         initial_content = ai_status_file.read_text()
+#         initial_content = status_brief_file.read_text()
         
 #         # Wait a moment to ensure different timestamp
 #         time.sleep(0.1)
@@ -898,7 +898,7 @@
 #             service.run_audit(quick=True)
         
 #         # Verify file still exists (new version)
-#         assert ai_status_file.exists(), "STATUS_BRIEF.md should exist after second run"
+#         assert status_brief_file.exists(), "STATUS_BRIEF.md should exist after second run"
         
 #         # Verify the archive directory we created still exists
 #         # The directory is created at the start of the test, so it should still exist
@@ -910,7 +910,7 @@
 #         assert archive_dir.exists(), f"Archive directory should exist at {archive_dir}"
         
 #         # Check if rotation actually occurred (optional - rotation depends on file modification and timing)
-#         archive_files = list(archive_dir.glob("AI_STATUS_*"))
+#         archive_files = list(archive_dir.glob("STATUS_BRIEF_*"))
 #         # Rotation is optional - the test verifies the directory exists, not that rotation occurred
     
 #     @pytest.mark.unit

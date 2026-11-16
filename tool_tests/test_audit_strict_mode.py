@@ -42,8 +42,8 @@ def test_audit_full_non_strict_allows_tier3_test_failures(temp_project_copy):
     service._check_and_trim_changelog_entries = MagicMock(return_value=None)
     service._check_documentation_quality = MagicMock(return_value=None)
     service._check_ascii_compliance = MagicMock(return_value=None)
-    service._generate_ai_status_document = MagicMock(return_value="# AI Status")
-    service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities")
+    service._generate_status_brief_document = MagicMock(return_value="# Status Brief")
+    service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief")
     service._generate_consolidated_report = MagicMock(return_value="# Consolidated")
 
     assert service.run_audit(full=True, strict=False) is True
@@ -70,8 +70,8 @@ def test_audit_full_strict_fails_on_tier3_test_failures(temp_project_copy):
     service._check_and_trim_changelog_entries = MagicMock(return_value=None)
     service._check_documentation_quality = MagicMock(return_value=None)
     service._check_ascii_compliance = MagicMock(return_value=None)
-    service._generate_ai_status_document = MagicMock(return_value="# AI Status")
-    service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities")
+    service._generate_status_brief_document = MagicMock(return_value="# Status Brief")
+    service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief")
     service._generate_consolidated_report = MagicMock(return_value="# Consolidated")
 
     assert service.run_audit(full=True, strict=True) is False
@@ -101,8 +101,8 @@ def test_audit_full_strict_fails_when_dev_tools_tests_fail(temp_project_copy):
     service._check_and_trim_changelog_entries = MagicMock(return_value=None)
     service._check_documentation_quality = MagicMock(return_value=None)
     service._check_ascii_compliance = MagicMock(return_value=None)
-    service._generate_ai_status_document = MagicMock(return_value="# AI Status")
-    service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities")
+    service._generate_status_brief_document = MagicMock(return_value="# Status Brief")
+    service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief")
     service._generate_consolidated_report = MagicMock(return_value="# Consolidated")
 
     assert service.run_audit(full=True, strict=True) is False
@@ -209,8 +209,8 @@ def test_audit_full_strict_fails_on_tier3_infra_cleanup_error(temp_project_copy)
     service._check_and_trim_changelog_entries = MagicMock(return_value=None)
     service._check_documentation_quality = MagicMock(return_value=None)
     service._check_ascii_compliance = MagicMock(return_value=None)
-    service._generate_ai_status_document = MagicMock(return_value="# AI Status")
-    service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities")
+    service._generate_status_brief_document = MagicMock(return_value="# Status Brief")
+    service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief")
     service._generate_consolidated_report = MagicMock(return_value="# Consolidated")
 
     assert service.run_audit(full=True, strict=True) is False
@@ -238,8 +238,8 @@ def test_audit_full_non_strict_allows_tier3_infra_cleanup_error(temp_project_cop
     service._check_and_trim_changelog_entries = MagicMock(return_value=None)
     service._check_documentation_quality = MagicMock(return_value=None)
     service._check_ascii_compliance = MagicMock(return_value=None)
-    service._generate_ai_status_document = MagicMock(return_value="# AI Status")
-    service._generate_ai_priorities_document = MagicMock(return_value="# AI Priorities")
+    service._generate_status_brief_document = MagicMock(return_value="# Status Brief")
+    service._generate_priorities_brief_document = MagicMock(return_value="# Priorities Brief")
     service._generate_consolidated_report = MagicMock(return_value="# Consolidated")
 
     assert service.run_audit(full=True, strict=False) is True

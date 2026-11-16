@@ -46,7 +46,7 @@ _patch_windows_mkdir_mode()
 
 
 def pytest_configure(config):
-    """Refuse to run under the host pytest.ini, which loads MHM conftest plugins."""
+    """Refuse to run under the host pytest.ini, which loads host conftest plugins."""
     ini = getattr(config, "inipath", None)
     if ini is None:
         return
@@ -54,7 +54,7 @@ def pytest_configure(config):
     if ini_path.parent.name != "development_tools":
         raise pytest.UsageError(
             "Development tools tests must use development_tools/pytest.ini so "
-            "MHM tests/conftest.py is not loaded. Run: python -m pytest -c "
+            "the host tests/conftest.py is not loaded. Run: python -m pytest -c "
             "development_tools/pytest.ini --rootdir=. "
             "--confcutdir=development_tools/tool_tests development_tools/tool_tests/"
         )
@@ -226,8 +226,8 @@ def load_development_tools_module(module_name: str):
                 "report_generation_linkify",
                 "report_generation_tier3_helpers",
                 "report_generation_scope_helpers",
-                "report_generation_ai_status",
-                "report_generation_ai_priorities",
+                "report_generation_status_brief",
+                "report_generation_priorities_brief",
                 "report_generation_consolidated",
                 "report_generation",
                 "commands",
@@ -413,8 +413,8 @@ def load_development_tools_module(module_name: str):
                         "report_generation_linkify",
                         "report_generation_tier3_helpers",
                         "report_generation_scope_helpers",
-                        "report_generation_ai_status",
-                        "report_generation_ai_priorities",
+                        "report_generation_status_brief",
+                        "report_generation_priorities_brief",
                         "report_generation_consolidated",
                         "report_generation",
                         "commands",

@@ -520,10 +520,10 @@ class TestThresholdValidation:
 
             # Check that report generation uses config thresholds
             assert hasattr(
-                service, "_generate_ai_status_document"
+                service, "_generate_status_brief_document"
             ), "Service should have status document generation"
             assert hasattr(
-                service, "_generate_ai_priorities_document"
+                service, "_generate_priorities_brief_document"
             ), "Service should have priorities document generation"
 
             # Verify config is accessible

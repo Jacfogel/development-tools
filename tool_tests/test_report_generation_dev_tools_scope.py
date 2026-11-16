@@ -63,7 +63,7 @@ def test_full_audit_status_explains_unified_dev_tools_coverage(temp_project_copy
         }
     }
 
-    doc = service._generate_ai_status_document()
+    doc = service._generate_status_brief_document()
 
     assert "Separate `--dev-tools-only` refresh not run in this full-repo Tier 3 pass." in doc
     assert "overall coverage line above already includes `development_tools`" in doc
@@ -103,6 +103,6 @@ def test_full_audit_priorities_use_duplicate_group_file_count_from_details(
         duplicate_payload if tool_name == "analyze_duplicate_functions" else {}
     )
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "2 potential duplicate groups across 3 files." in doc

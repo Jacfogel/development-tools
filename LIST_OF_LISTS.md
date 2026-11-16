@@ -97,14 +97,14 @@ Paired docs = heading/content sync. Version-sync lists = version/date metadata. 
 
 | What | Canonical source | Notes |
 |------|------------------|-------|
-| **Host adapters** | config `host.backup_manager_module` / `backup_manager_attr` | Portable code default is empty (skip). MHM live/example JSON sets `core.backup_manager`. Loader: `development_tools/shared/host_hooks.py`. Forbidden import prefixes are derived from `local_module_prefixes` minus `development_tools` |
-| **local_module_prefixes** | config `constants.local_module_prefixes` | Drives derived `scan_directories` / `core_modules` / `project_directories` via `derived_prefix_excludes`. MHM `core` excludes omit `development_tools` so `CORE_MODULES` includes it (documented in live/example `_comment`); portable default excludes `development_tools` from core |
+| **Host adapters** | config `host.backup_manager_module` / `backup_manager_attr` | Empty by default (skip). Loaded by `development_tools/shared/host_hooks.py`. Forbidden import prefixes are derived from `local_module_prefixes` minus `development_tools` |
+| **local_module_prefixes** | config `constants.local_module_prefixes` | Drives derived `scan_directories`, `core_modules`, and `project_directories` via `derived_prefix_excludes`. The default excludes `development_tools` from core |
 | **Common names / third-party / code patterns** | config `constants.common_*`, `third_party_libraries` | Loaded by `development_tools/shared/constants.py` with portable fallbacks |
 | **Test markers** | config top-level `test_markers` | `directory_to_marker` derived from `categories` when absent; `development_tools/shared/constants.py` re-exports |
 | **Domain mapper** | config `domain_mapper.*` | Portable `DOMAIN_MAPPER_DEFAULTS` empty; project maps in JSON (example for CI). Missing prefixes still augmented at runtime |
 | **Static channel-logger paths** | config `static_checks.channel_loggers` | Component-name allowlist SSOT: `core/logger.py` |
-| **Known deleted files** | config `data_freshness.known_deleted_files` | Portable default `[]`; MHM paths only in live JSON |
-| **Function-registry narrative** | Portable defaults: `development_tools/config/config.py` - `AUDIT_FUNCTION_REGISTRY` | MHM path trees: JSON `analyze_function_registry.decision_trees` |
+| **Known deleted files** | config `data_freshness.known_deleted_files` | Empty by default. Hosts can supply paths in their project configuration |
+| **Function-registry narrative** | `AUDIT_FUNCTION_REGISTRY` in `development_tools/config/config.py` | Customize path trees with `analyze_function_registry.decision_trees` |
 | **analyze_config expected functions / sections** | config `analyze_config` | Portable `CONFIG_VALIDATOR` lists empty; project values in JSON / example |
 | **analyze_functions / error_handling keywords** | config sections (defaults in `development_tools/config/config.py`) | Prefer omitting JSON keys that match defaults exactly |
 | **Portable keyword/pattern sets** | `development_tools/shared/constants.py` | e.g. `SPECIAL_METHODS`, `STANDARD_LIBRARY_*`, `ASCII_REPLACEMENTS`, path-drift operators |
@@ -148,8 +148,7 @@ Dev-tools list SSOT from the 2026-08-06 scan is closed. Product/runtime lists: [
 - `COMMAND_GROUPS` ⊆ `COMMAND_REGISTRY` (aliases like `full-audit` omitted from groups on purpose).
 - Version-sync category lists and `default_docs` derivation; `local_module_prefixes` directory derivation.
 - Live JSON omits optional keys/sections that match code defaults (`audit_tiers`, `default_docs`, `tool_commands`, `file_patterns`, `test_run`, `analyze_duplicate_functions`, `workflow`, `documentation`, `auto_document`, `ai_validation`, `ai_collaboration`, `audit`, `output`, `status`, `system_signals`, `validation`, `quick_audit`, matching `static_analysis` / `analyze_function_registry` scalars, …).
-- `base_exclusions` via portable defaults + additions/removals; MHM `analyze_config` / `domain_mapper` / `known_deleted_files` live only in JSON (empty portable code defaults).
-- MHM `derived_prefix_excludes.core` intentionally omits `development_tools` (includes it in `CORE_MODULES`); documented in live/example `_comment`.
+- Configure `base_exclusions` through portable defaults and project-specific additions or removals. Set host-specific `analyze_config`, `domain_mapper`, and `known_deleted_files` in project JSON.
 - Path-drift keyword overlap: `_PYTHON_KEYWORDS_SHARED` in `development_tools/shared/constants.py` feeds `COMMON_VARIABLE_NAMES` and `PYTHON_KEYWORDS_PATH_DRIFT`.
 - Legacy scan patterns in inventory; lean live `legacy_cleanup`.
 - Quick-audit membership = `audit_tiers.TIER1_*` (retired unused `quick_audit.audit_scripts`).

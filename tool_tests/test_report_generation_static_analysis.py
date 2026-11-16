@@ -1,4 +1,4 @@
-"""Static analysis report integration tests for AI status/priorities/consolidated docs."""
+"""Static analysis report integration tests for status brief, priorities brief, and consolidated report."""
 
 from pathlib import Path
 
@@ -89,8 +89,8 @@ def test_static_analysis_sections_render_in_generated_reports(temp_project_copy)
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    status_doc = service._generate_ai_status_document()
-    priorities_doc = service._generate_ai_priorities_document()
+    status_doc = service._generate_status_brief_document()
+    priorities_doc = service._generate_priorities_brief_document()
     consolidated_doc = service._generate_consolidated_report()
 
     assert "## Static Analysis" in status_doc
@@ -131,20 +131,20 @@ def test_static_analysis_summary_requires_current_known_results(temp_project_cop
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    cached_doc = service._generate_ai_status_document()
+    cached_doc = service._generate_status_brief_document()
     assert "NOT CURRENT (run `audit --full`)" in cached_doc
     assert "Static Analysis (ruff/pyright/bandit/pip-audit/vulture)**: CLEAN" not in cached_doc
 
     service._tools_run_in_current_tier = tool_names
-    current_doc = service._generate_ai_status_document()
+    current_doc = service._generate_status_brief_document()
     assert "Static Analysis (ruff/pyright/bandit/pip-audit/vulture)**: CLEAN" in current_doc
 
     payloads["analyze_bandit"]["summary"]["status"] = "UNKNOWN"
-    unknown_doc = service._generate_ai_status_document()
+    unknown_doc = service._generate_status_brief_document()
     assert "NOT CURRENT (run `audit --full`)" in unknown_doc
     assert "Static Analysis (ruff/pyright/bandit/pip-audit/vulture)**: CLEAN" not in unknown_doc
 
     payloads["analyze_bandit"]["summary"]["status"] = "FAIL"
-    failed_doc = service._generate_ai_status_document()
+    failed_doc = service._generate_status_brief_document()
     assert "INCOMPLETE (one or more tools did not pass)" in failed_doc
     assert "Static Analysis (ruff/pyright/bandit/pip-audit/vulture)**: CLEAN" not in failed_doc

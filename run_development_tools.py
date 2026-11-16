@@ -20,11 +20,11 @@ if project_root_str not in sys.path:
     sys.path.insert(0, project_root_str)
 
 # Force explicit dev-tools logging mode before importing the logger module.
-# Preserve MHM_TESTING=1 when pytest/conftest already set it so Tier 3 pytest
+# Preserve DEVTOOLS_TESTING=1 when pytest/conftest already set it so Tier 3 pytest
 # does not bleed test output into development_tools/reports/logs/ai_dev_tools.log.
-os.environ["MHM_DEV_TOOLS_RUN"] = "1"
-if os.getenv("MHM_TESTING") != "1":
-    os.environ["MHM_TESTING"] = "0"
+os.environ["DEVTOOLS_RUN"] = "1"
+if os.getenv("DEVTOOLS_TESTING") != "1":
+    os.environ["DEVTOOLS_TESTING"] = "0"
 # Integration tests subprocess this entrypoint; inherited PYTEST_CURRENT_TEST would
 # make create_output_file treat the CLI as an in-test write and block real status files.
 os.environ.pop("PYTEST_CURRENT_TEST", None)
@@ -133,7 +133,6 @@ def _cleanup_transient_runtime_artifacts(project_root: Path) -> None:
     dir_prefixes = (
         "logs_",
         "devtools_pytest_tmp_main_",
-        "mhm_pytest_tmp_main_",  # legacy prefix (pre-portable rename)
         "pytest-of-",
         "tmp_",
     )

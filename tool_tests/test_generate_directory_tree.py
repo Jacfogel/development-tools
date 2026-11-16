@@ -28,7 +28,6 @@ class TestDirectoryTreeGenerator:
             generator = DirectoryTreeGenerator(project_root=str(tmp_path))
 
         assert generator.project_root == Path(tmp_path).resolve()
-        assert generator.docs_dir == "development_docs"
     
     @pytest.mark.unit
     def test_init_with_config_path(self, tmp_path):
@@ -55,7 +54,6 @@ class TestDirectoryTreeGenerator:
 
             generator2 = DirectoryTreeGenerator()
             assert generator2.project_root.exists()
-            assert generator2.docs_dir == "development_docs"
     
     @pytest.mark.unit
     @patch('subprocess.run')
@@ -79,6 +77,7 @@ C:\\TEST
         
         # Should return path to generated file
         assert output_file
+        assert Path(output_file) == tmp_path / "development_tools/reports/DIRECTORY_TREE.md"
         assert Path(output_file).exists()
         
         # Verify file content includes header
@@ -181,11 +180,11 @@ C:\TEST
         )
         
         generator = DirectoryTreeGenerator(project_root=str(tmp_path))
-        custom_output = "custom_tree.md"
+        custom_output = "development_tools/reports/custom_tree.md"
         output_file = generator.generate_directory_tree(output_file=custom_output)
         
         # Should use custom output path
-        assert custom_output in output_file or Path(output_file).name == custom_output
+        assert Path(output_file) == tmp_path / custom_output
     
     @pytest.mark.unit
     @patch('subprocess.run')

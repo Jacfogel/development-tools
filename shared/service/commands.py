@@ -931,30 +931,30 @@ class CommandsMixin:
             )
 
             try:
-                ai_status = self._generate_ai_status_document()
+                status_brief = self._generate_status_brief_document()
                 from ..file_rotation import create_output_file
-                ai_status_file = create_output_file(report_paths["ai_status"], ai_status, project_root=self.project_root)
-                logger.info(f"Generated: {ai_status_file}")
+                status_brief_file = create_output_file(report_paths["status_brief"], status_brief, project_root=self.project_root)
+                logger.info(f"Generated: {status_brief_file}")
             except Exception as e:
-                if os.getenv("MHM_TESTING") == "1":
+                if os.getenv("DEVTOOLS_TESTING") == "1":
                     logger.debug(
-                        "Error generating AI_STATUS document: %s", e, exc_info=True
+                        "Error generating STATUS_BRIEF document: %s", e, exc_info=True
                     )
                 else:
-                    logger.warning("Error generating AI_STATUS document: %s", e)
+                    logger.warning("Error generating STATUS_BRIEF document: %s", e)
             
             try:
-                ai_priorities = self._generate_ai_priorities_document()
+                priorities_brief = self._generate_priorities_brief_document()
                 from ..file_rotation import create_output_file
-                ai_priorities_file = create_output_file(report_paths["ai_priorities"], ai_priorities, project_root=self.project_root)
-                logger.info(f"Generated: {ai_priorities_file}")
+                priorities_brief_file = create_output_file(report_paths["priorities_brief"], priorities_brief, project_root=self.project_root)
+                logger.info(f"Generated: {priorities_brief_file}")
             except Exception as e:
-                if os.getenv("MHM_TESTING") == "1":
+                if os.getenv("DEVTOOLS_TESTING") == "1":
                     logger.debug(
-                        "Error generating AI_PRIORITIES document: %s", e, exc_info=True
+                        "Error generating PRIORITIES_BRIEF document: %s", e, exc_info=True
                     )
                 else:
-                    logger.warning("Error generating AI_PRIORITIES document: %s", e)
+                    logger.warning("Error generating PRIORITIES_BRIEF document: %s", e)
             
             try:
                 consolidated_report = self._generate_consolidated_report()
@@ -962,7 +962,7 @@ class CommandsMixin:
                 consolidated_file = create_output_file(report_paths["consolidated_report"], consolidated_report, project_root=self.project_root)
                 logger.info(f"Generated: {consolidated_file}")
             except Exception as e:
-                if os.getenv("MHM_TESTING") == "1":
+                if os.getenv("DEVTOOLS_TESTING") == "1":
                     logger.debug(
                         "Error generating consolidated report: %s", e, exc_info=True
                     )
@@ -978,7 +978,7 @@ class CommandsMixin:
         logger.info("=" * 50)
         success = self._run_doc_sync_check()
         if success:
-            # Persist aggregate JSON for AI_PRIORITIES / tooling (same payload as audit path).
+            # Persist aggregate JSON for PRIORITIES_BRIEF / tooling (same payload as audit path).
             self._persist_documentation_sync_aggregate_json()
             logger.info("Documentation sync check completed!")
         else:

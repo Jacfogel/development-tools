@@ -194,7 +194,7 @@ def _problem_payloads() -> dict[str, dict]:
             "summary": {"total_issues": 2, "files_affected": 2, "status": "WARN"},
             "details": {
                 "legacy_markers": 3,
-                "report_path": "development_docs/LEGACY_REFERENCE_REPORT.md",
+                "report_path": "development_tools/reports/LEGACY_REFERENCE_REPORT.md",
             },
         },
         "analyze_test_markers": {
@@ -491,8 +491,8 @@ def _wire_problem_service(service: AIToolsService, temp_project_copy: Path) -> N
     (docs / "addresses.md").write_text("addresses", encoding="utf-8")
     (docs / "links.md").write_text("links", encoding="utf-8")
 
-    reports = temp_project_copy / "development_docs"
-    reports.mkdir(exist_ok=True)
+    reports = temp_project_copy / "development_tools/reports"
+    reports.mkdir(parents=True, exist_ok=True)
     (reports / "TEST_COVERAGE_REPORT.md").write_text("# coverage\n", encoding="utf-8")
     (reports / "LEGACY_REFERENCE_REPORT.md").write_text("# legacy\n", encoding="utf-8")
 
@@ -562,8 +562,8 @@ def test_problem_payload_renders_status_priorities_and_consolidated(
     service = AIToolsService(project_root=str(temp_project_copy))
     _wire_problem_service(service, temp_project_copy)
 
-    status_doc = service._generate_ai_status_document()
-    priorities_doc = service._generate_ai_priorities_document()
+    status_doc = service._generate_status_brief_document()
+    priorities_doc = service._generate_priorities_brief_document()
     consolidated_doc = service._generate_consolidated_report()
 
     assert "Tier 3 (Full Audit)" in status_doc
@@ -640,8 +640,8 @@ def test_dev_tools_scoped_problem_payload_uses_scoped_headers(
     _wire_problem_service(service, temp_project_copy)
     service.dev_tools_only_mode = True
 
-    status_doc = service._generate_ai_status_document()
-    priorities_doc = service._generate_ai_priorities_document()
+    status_doc = service._generate_status_brief_document()
+    priorities_doc = service._generate_priorities_brief_document()
     consolidated_doc = service._generate_consolidated_report()
 
     assert "Development Tools Status - Scoped Snapshot" in status_doc
@@ -661,12 +661,12 @@ def test_mid_audit_write_and_tier1_headers(temp_project_copy: Path) -> None:
     service.current_audit_tier = None
     service._audit_in_progress = True
 
-    status_doc = service._generate_ai_status_document()
+    status_doc = service._generate_status_brief_document()
     assert "run_development_tools.py status" in status_doc
 
     service._audit_in_progress = False
     service.current_audit_tier = 1
-    priorities_doc = service._generate_ai_priorities_document()
+    priorities_doc = service._generate_priorities_brief_document()
     consolidated_doc = service._generate_consolidated_report()
     assert "audit --quick" in priorities_doc
     assert "Tier 1 (Quick Audit)" in consolidated_doc
@@ -685,15 +685,15 @@ def test_validation_poor_and_fair_status_lines(temp_project_copy: Path) -> None:
         return payloads.get(tool_name, {})
 
     service._load_tool_data = fake_load
-    poor_status = service._generate_ai_status_document()
+    poor_status = service._generate_status_brief_document()
     poor_consolidated = service._generate_consolidated_report()
     assert "POOR" in poor_status
     assert "POOR" in poor_consolidated
 
     payloads["analyze_ai_work"] = {"output": "Result: FAIR structural score"}
-    fair_status = service._generate_ai_status_document()
+    fair_status = service._generate_status_brief_document()
     assert "NEEDS ATTENTION" in fair_status
 
     payloads["analyze_ai_work"] = {"output": "Validation finished with notes"}
-    generic_status = service._generate_ai_status_document()
+    generic_status = service._generate_status_brief_document()
     assert "Status available" in generic_status

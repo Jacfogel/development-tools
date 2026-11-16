@@ -2,7 +2,7 @@
 
 The `development` branch owns the tools suite, its synthetic fixtures, and tooling policy checks. Use the shared [tool guide](../../README.md) for CLI and audit behavior. The `published` branch contains the reusable tooling and excludes its development suite.
 
-Several integration tests exercise MHM conventions. Run the development suite in a disposable MHM checkout with this repository's `development` checkout at the host's `development_tools/` path. Copy this repository's `tests/development_tools/fixtures/development_tools_demo/` to the host's `tests/fixtures/development_tools_demo/`. Install the host development dependencies and run the commands below from the MHM checkout root.
+Run the suite from a disposable Python project with this checkout at `development_tools/`. Copy `development_tools/tests/development_tools/fixtures/development_tools_demo/` to the project root's `tests/fixtures/development_tools_demo/`. Install pytest and the plugins required by `development_tools/pytest.ini`, then run the commands below from the project root. Integration tests that exercise host conventions may require matching host configuration and files.
 
 ## 1. Quick Start
 
@@ -11,18 +11,10 @@ Several integration tests exercise MHM conventions. Run the development suite in
 python -m pytest -c development_tools/pytest.ini --rootdir=. --confcutdir=development_tools/tool_tests development_tools/tool_tests/
 ```
 
-Do **not** use bare `pytest development_tools/tool_tests/` with the host `pytest.ini`. That config ignores the tools tests so they do not load MHM's `tests/conftest.py`. If you forget `-c`, pytest exits with a usage error that repeats the command above.
+Use the tools-specific pytest configuration and conftest cutoff in the command above to keep the host project's fixtures out of the test run.
 
-**Run via project test runner (full tree)**:
-```powershell
-python run_tests.py --mode all --full
-```
-
-Note:
-- Default `python run_tests.py` (`--mode all`) does not include `development_tools/tool_tests/`.
-- Use `--full` when you want development tools tests included in the same run.
-- `audit --full` uses `development_tools/tests/run_test_suite.py` to run pytest directly without coverage. It does not call the project-specific `run_tests.py`.
-- Run `python run_development_tools.py coverage` separately when coverage metrics, marker analysis, and `development_docs/TEST_COVERAGE_REPORT.md` need refresh.
+`audit --full` uses `development_tools/tests/run_test_suite.py` to run pytest without coverage.
+Run `python development_tools/run_development_tools.py coverage` separately to refresh coverage and marker reports.
 
 **Test Results Location**: Test output appears in console; logs go to `tests/logs/` if configured.
 
@@ -45,8 +37,8 @@ The development tools test suite is organized into focused, maintainable modules
 - **`development_tools/tool_tests/test_generate_module_dependencies.py`**: Module dependency analysis tests
 - **`development_tools/tool_tests/test_regenerate_coverage_metrics.py`**: Coverage regeneration tests
 - **`development_tools/tool_tests/test_legacy_reference_cleanup.py`**: Legacy reference cleanup tests
-- **`development_tools/tool_tests/test_audit_status_updates.py`**: Lightweight audit status output tests (single batch of `create_output_file` calls for AI_STATUS / AI_PRIORITIES / CONSOLIDATED). The legacy suite in `development_tools/tool_tests/test_audit_tier_comprehensive.py` remains retired (commented)-use this file plus `development_tools/tool_tests/test_status_file_timing.py` for overlapping intent.
-- **`development_tools/tool_tests/test_report_generation_problem_payload.py`**: Full-issue payload rendering for AI_STATUS, AI_PRIORITIES, and CONSOLIDATED reports (low coverage, complexity, doc drift, coupling, backup, validation).
+- **`development_tools/tool_tests/test_audit_status_updates.py`**: Lightweight audit status output tests (single batch of `create_output_file` calls for STATUS_BRIEF / PRIORITIES_BRIEF / CONSOLIDATED). The legacy suite in `development_tools/tool_tests/test_audit_tier_comprehensive.py` remains retired (commented)-use this file plus `development_tools/tool_tests/test_status_file_timing.py` for overlapping intent.
+- **`development_tools/tool_tests/test_report_generation_problem_payload.py`**: Full-issue payload rendering for STATUS_BRIEF, PRIORITIES_BRIEF, and CONSOLIDATED reports (low coverage, complexity, doc drift, coupling, backup, validation).
 - **`development_tools/tool_tests/test_status_file_timing.py`**: Status file write timing verification
 - **`development_tools/tool_tests/test_output_storage_archiving.py`**: Output storage and archiving tests
 - **`development_tools/tool_tests/test_run_development_tools.py`**: CLI runner smoke tests
@@ -163,10 +155,10 @@ def test_status_command_exits_zero(self):
 
 ## 6. Portability Considerations
 
-**Important**: The development tools are intended to be **portable** and not limited to use in the MHM project.
+The development tools are intended for use across Python projects.
 
 When writing tests:
-- Avoid hardcoding MHM-specific paths or assumptions
+- Avoid hardcoding host-specific paths or assumptions
 - Use relative paths and configuration-driven paths where possible
 - Test with the synthetic demo project to ensure tools work in different project structures
 - Consider how tools would behave in other Python projects with different directory layouts

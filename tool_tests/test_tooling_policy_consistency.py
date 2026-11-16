@@ -20,8 +20,8 @@ GLOB_DISCOVERY_PATTERN = re.compile(
     re.IGNORECASE,
 )
 OS_WALK_PATTERN = re.compile(r"""\bos\.walk\(""")
-GENERIC_MHM_DEFAULT_STRINGS = {
-    "run_mhm.py",
+HOST_ONLY_DEFAULT_STRINGS = {
+    "run_app.py",
     "core/config.py",
     "core/service.py",
     "core/logger.py",
@@ -29,7 +29,7 @@ GENERIC_MHM_DEFAULT_STRINGS = {
     "core/network_probe.py",
     "core/time_utilities.py",
 }
-MHM_PACKAGE_ROOT_NAMES = {
+HOST_PACKAGE_ROOT_NAMES = {
     "core",
     "communication",
     "ui",
@@ -244,7 +244,7 @@ def test_dev_tools_has_no_direct_core_imports():
 
 
 @pytest.mark.unit
-def test_generic_config_defaults_do_not_embed_mhm_project_files():
+def test_generic_config_defaults_do_not_embed_host_project_files():
     config_module = load_development_tools_module("config.config")
 
     generic_lists = [
@@ -253,7 +253,7 @@ def test_generic_config_defaults_do_not_embed_mhm_project_files():
     ]
     flattened = {str(item) for values in generic_lists for item in values}
 
-    assert not (flattened & GENERIC_MHM_DEFAULT_STRINGS)
+    assert not (flattened & HOST_ONLY_DEFAULT_STRINGS)
 
     static_defaults = getattr(config_module, "STATIC_ANALYSIS", {})
     assert static_defaults.get("ruff_path_shards") == []
@@ -267,15 +267,15 @@ def test_generic_config_defaults_do_not_embed_mhm_project_files():
     allowlist = {
         str(p) for p in channel_defaults.get("allowed_logging_import_paths", [])
     }
-    assert not (allowlist & GENERIC_MHM_DEFAULT_STRINGS)
+    assert not (allowlist & HOST_ONLY_DEFAULT_STRINGS)
 
-    # Code defaults must not hardcode MHM first-party package roots as shards/roots.
+    # Code defaults must not hardcode host-specific first-party package roots as shards/roots.
     shard_names = {
         str(path)
         for shard in static_defaults.get("ruff_path_shards", [])
         for path in shard
     }
-    assert not (shard_names & MHM_PACKAGE_ROOT_NAMES)
+    assert not (shard_names & HOST_PACKAGE_ROOT_NAMES)
 
 
 @pytest.mark.unit
@@ -427,7 +427,7 @@ def test_tooling_policy_runtime_budget():
     cli_module = load_development_tools_module("shared.cli_interface")
     metadata_module = load_development_tools_module("shared.tool_metadata")
 
-    max_seconds = float(os.getenv("MHM_TOOLING_POLICY_MAX_SECONDS", "12.0"))
+    max_seconds = float(os.getenv("DEVTOOLS_POLICY_MAX_SECONDS", "12.0"))
 
     started = time.perf_counter()
     _build_command_flag_inventory(cli_module)
@@ -441,5 +441,5 @@ def test_tooling_policy_runtime_budget():
 
     assert elapsed <= max_seconds, (
         f"Tooling policy checks are too slow: {elapsed:.2f}s > {max_seconds:.2f}s "
-        "(override with MHM_TOOLING_POLICY_MAX_SECONDS if needed)."
+        "(override with DEVTOOLS_POLICY_MAX_SECONDS if needed)."
     )

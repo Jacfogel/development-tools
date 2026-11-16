@@ -69,7 +69,7 @@
 - **Recent Changes**: Data unavailable (run `system-signals` command)
 
 ## Reference Files
-- Latest AI status: [STATUS_BRIEF.md](development_tools/STATUS_BRIEF.md)
-- Current AI priorities: [PRIORITIES_BRIEF.md](development_tools/PRIORITIES_BRIEF.md)
+- Latest Status Brief: [STATUS_BRIEF.md](development_tools/STATUS_BRIEF.md)
+- Current Priorities Brief: [PRIORITIES_BRIEF.md](development_tools/PRIORITIES_BRIEF.md)
 - Detailed JSON results: [analysis_detailed_results.json](development_tools/reports/analysis_detailed_results.json)
 - Historical audit data: development_tools/reports/archive

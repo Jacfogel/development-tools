@@ -27,7 +27,7 @@ generate_module_section = deps_module.generate_module_section
 get_directory_description = deps_module.get_directory_description
 get_module_purpose = deps_module.get_module_purpose
 identify_modules_needing_enhancement = deps_module.identify_modules_needing_enhancement
-generate_ai_module_dependencies_content = deps_module.generate_ai_module_dependencies_content
+generate_module_dependencies_brief_content = deps_module.generate_module_dependencies_brief_content
 
 
 class TestImportExtraction:
@@ -278,7 +278,7 @@ class TestContentGeneration:
         assert "None (not imported by other modules)" in section
 
     @pytest.mark.unit
-    def test_generate_ai_module_dependencies_content_uses_dynamic_pattern_sections(
+    def test_generate_module_dependencies_brief_content_uses_dynamic_pattern_sections(
         self, monkeypatch
     ):
         class FakePatternAnalyzer:
@@ -313,7 +313,7 @@ class TestContentGeneration:
             }
         }
 
-        content = generate_ai_module_dependencies_content(actual_imports)
+        content = generate_module_dependencies_brief_content(actual_imports)
 
         assert "Files Scanned**: 1" in content
         assert "Standard Library**: 1 (50.0%)" in content

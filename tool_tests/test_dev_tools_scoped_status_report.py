@@ -82,7 +82,7 @@ def test_dev_tools_scoped_status_snapshot_uses_package_coverage_not_stale_overal
     }
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_status_document()
+    doc = service._generate_status_brief_document()
 
     assert "Development Tools Package Coverage (this pass)" in doc
     assert "61.7" in doc and "617" in doc.replace(" ", "")

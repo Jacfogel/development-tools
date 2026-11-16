@@ -425,7 +425,7 @@ class ConsolidatedReportDocumentMixin:
                         "candidate orphan worker process(es); see **Pytest process cleanup (Windows)** below."
                     )
 
-        # Use error_details for consistent metric sourcing (same as AI_STATUS/AI_PRIORITIES)
+        # Use error_details for consistent metric sourcing (same as STATUS_BRIEF/PRIORITIES_BRIEF)
         error_cov = error_details.get("analyze_error_handling") or error_details.get(
             "error_handling_coverage"
         )
@@ -1299,7 +1299,7 @@ class ConsolidatedReportDocumentMixin:
             lines.append(
                 "- **Overall Coverage**: **Skipped** - this scoped audit does not refresh coverage. "
                 "Run `python development_tools/run_development_tools.py coverage` for updated "
-                "product coverage and `development_docs/TEST_COVERAGE_REPORT.md`."
+                "product coverage and `development_tools/reports/TEST_COVERAGE_REPORT.md`."
             )
         elif coverage_summary and isinstance(coverage_summary, dict):
             overall = coverage_summary.get("overall") or {}
@@ -2911,12 +2911,12 @@ class ConsolidatedReportDocumentMixin:
             if self._is_dev_tools_scoped_report()
             else report_paths
         )
-        status_file = full_paths["ai_status"]
-        priorities_file = full_paths["ai_priorities"]
+        status_file = full_paths["status_brief"]
+        priorities_file = full_paths["priorities_brief"]
         status_href = self._markdown_href_from_dev_tools_report(status_file, source=report_path)
         priorities_href = self._markdown_href_from_dev_tools_report(priorities_file, source=report_path)
         if self._is_dev_tools_scoped_report():
-            scoped_priorities = report_paths["ai_priorities"]
+            scoped_priorities = report_paths["priorities_brief"]
             scoped_href = self._markdown_href_from_dev_tools_report(scoped_priorities, source=report_path)
             lines.append(
                 f"- Full-repo status (not produced by this run): [{status_file.name}]({status_href})"
@@ -2926,8 +2926,8 @@ class ConsolidatedReportDocumentMixin:
             )
             lines.append(f"- Full-repo priorities: [{priorities_file.name}]({priorities_href})")
         else:
-            lines.append(f"- Latest AI status: [{status_file.name}]({status_href})")
-            lines.append(f"- Current AI priorities: [{priorities_file.name}]({priorities_href})")
+            lines.append(f"- Latest Status Brief: [{status_file.name}]({status_href})")
+            lines.append(f"- Current Priorities Brief: [{priorities_file.name}]({priorities_href})")
         results_path = self._get_results_file_path()
         if results_path.is_relative_to(self.project_root):
             results_path = results_path.relative_to(self.project_root)

@@ -483,12 +483,12 @@ def test_run_audit_internal_interrupt_converts_to_failed_audit(
     monkeypatch.setattr(service, "_check_documentation_quality", lambda *_a, **_k: None)
     monkeypatch.setattr(service, "_check_ascii_compliance", lambda *_a, **_k: None)
     monkeypatch.setattr(
-        service, "_generate_ai_status_document", lambda *_a, **_k: "# AI Status\n"
+        service, "_generate_status_brief_document", lambda *_a, **_k: "# Status Brief\n"
     )
     monkeypatch.setattr(
         service,
-        "_generate_ai_priorities_document",
-        lambda *_a, **_k: "# AI Priorities\n",
+        "_generate_priorities_brief_document",
+        lambda *_a, **_k: "# Priorities Brief\n",
     )
     monkeypatch.setattr(
         service, "_generate_consolidated_report", lambda *_a, **_k: "# Consolidated\n"
@@ -525,12 +525,12 @@ def test_run_audit_trims_changelog_before_tier2_doc_sync(
     monkeypatch.setattr(service, "_check_documentation_quality", lambda *_a, **_k: None)
     monkeypatch.setattr(service, "_check_ascii_compliance", lambda *_a, **_k: None)
     monkeypatch.setattr(
-        service, "_generate_ai_status_document", lambda *_a, **_k: "# AI Status\n"
+        service, "_generate_status_brief_document", lambda *_a, **_k: "# Status Brief\n"
     )
     monkeypatch.setattr(
         service,
-        "_generate_ai_priorities_document",
-        lambda *_a, **_k: "# AI Priorities\n",
+        "_generate_priorities_brief_document",
+        lambda *_a, **_k: "# Priorities Brief\n",
     )
     monkeypatch.setattr(
         service, "_generate_consolidated_report", lambda *_a, **_k: "# Consolidated\n"
@@ -1145,7 +1145,7 @@ def test_log_tool_completion_generate_legacy_reference_report_adds_path(
     with ctx:
         service._log_tool_completion("generate_legacy_reference_report", {"success": True}, 0.03)
     msg = log.info.call_args[0][0]
-    assert "detailed_report=development_docs/LEGACY_REFERENCE_REPORT.md" in msg
+    assert "detailed_report=development_tools/reports/LEGACY_REFERENCE_REPORT.md" in msg
 
 
 @pytest.mark.unit

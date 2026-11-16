@@ -47,7 +47,7 @@ def test_default_log_path_uses_development_tools_reports_logs(
 def test_dev_tools_logger_rotates_to_backups_dir(logging_mod, monkeypatch, tmp_path):
     monkeypatch.delenv("DISABLE_LOG_ROTATION", raising=False)
     logs_dir = tmp_path / "development_tools" / "reports" / "logs"
-    monkeypatch.setenv("MHM_TESTING", "0")
+    monkeypatch.setenv("DEVTOOLS_TESTING", "0")
     monkeypatch.setenv("DEV_TOOLS_LOGS_DIR", str(logs_dir))
     monkeypatch.delenv("LOG_AI_DEV_TOOLS_FILE", raising=False)
     monkeypatch.setenv("DEV_TOOLS_LOG_MAX_BYTES", "120")
@@ -74,7 +74,7 @@ def test_dev_tools_logger_defaults_to_one_mb_rotation_threshold(
     logging_mod, monkeypatch, tmp_path
 ):
     logs_dir = tmp_path / "development_tools" / "reports" / "logs"
-    monkeypatch.setenv("MHM_TESTING", "0")
+    monkeypatch.setenv("DEVTOOLS_TESTING", "0")
     monkeypatch.setenv("DEV_TOOLS_LOGS_DIR", str(logs_dir))
     monkeypatch.delenv("LOG_AI_DEV_TOOLS_FILE", raising=False)
     monkeypatch.delenv("DEV_TOOLS_LOG_MAX_BYTES", raising=False)
@@ -102,7 +102,7 @@ def test_log_rollover_deferred_while_audit_lock_active(
     project_root = tmp_path / "proj"
     logs_dir = project_root / "development_tools" / "reports" / "logs"
     logs_dir.mkdir(parents=True)
-    monkeypatch.setenv("MHM_TESTING", "0")
+    monkeypatch.setenv("DEVTOOLS_TESTING", "0")
     monkeypatch.setenv("DEV_TOOLS_LOGS_DIR", str(logs_dir))
     monkeypatch.delenv("LOG_AI_DEV_TOOLS_FILE", raising=False)
     monkeypatch.setenv("DEV_TOOLS_LOG_MAX_BYTES", "120")
@@ -138,7 +138,7 @@ def test_log_rollover_runs_when_no_audit_lock(
 ):
     monkeypatch.delenv("DISABLE_LOG_ROTATION", raising=False)
     logs_dir = tmp_path / "development_tools" / "reports" / "logs"
-    monkeypatch.setenv("MHM_TESTING", "0")
+    monkeypatch.setenv("DEVTOOLS_TESTING", "0")
     monkeypatch.setenv("DEV_TOOLS_LOGS_DIR", str(logs_dir))
     monkeypatch.delenv("LOG_AI_DEV_TOOLS_FILE", raising=False)
     monkeypatch.setenv("DEV_TOOLS_LOG_MAX_BYTES", "120")

@@ -517,7 +517,7 @@ class TestErrorHandlingHelpersAndAggregation:
         assert analyzer._determine_operation_type("generate_reply", "ai/chatbot.py", "") == "ai"
         assert analyzer._determine_operation_type("helper", "core/util.py", "return 1") == "general"
 
-        assert analyzer._is_entry_point("main", "run_mhm.py") is True
+        assert analyzer._is_entry_point("main", "run_app.py") is True
         assert analyzer._is_entry_point("dispatch", "communication/command_handlers.py") is True
         assert analyzer._is_entry_point("on_clicked", "ui/widgets/form.py") is True
         assert analyzer._is_entry_point("serve", "core/routes.py", "@app.route('/')") is True

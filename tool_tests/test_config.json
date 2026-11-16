@@ -40,8 +40,8 @@
       "*/pyscript*",
       "*/shibokensupport/*",
       "*/signature_bootstrap.py",
-      "run_mhm.py",
-      "*/run_mhm.py",
+      "run_app.py",
+      "*/run_app.py",
       "run_tests.py",
       "*/run_tests.py"
     ]

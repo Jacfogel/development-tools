@@ -96,7 +96,7 @@ class TestPathDriftIntegration:
     
     @pytest.mark.integration
     @pytest.mark.slow
-    def test_path_drift_appears_in_ai_status(self, tmp_path):
+    def test_path_drift_appears_in_status_brief(self, tmp_path):
         """Run audit with path drift issues and verify they appear in STATUS_BRIEF.md."""
         project_root = tmp_path / "test_project"
         project_root.mkdir()
@@ -126,11 +126,11 @@ class TestPathDriftIntegration:
 
         # run_audit orchestrates through run_script; patch that path to avoid subprocess work.
         with patch.object(
-            service, "_generate_ai_status_document", return_value="# AI Status\n"
+            service, "_generate_status_brief_document", return_value="# Status Brief\n"
         ), patch.object(
             service,
-            "_generate_ai_priorities_document",
-            return_value="# AI Priorities\n",
+            "_generate_priorities_brief_document",
+            return_value="# Priorities Brief\n",
         ), patch.object(
             service, "_generate_consolidated_report", return_value="# Consolidated\n"
         ), no_op_patches[0], no_op_patches[1], no_op_patches[2], no_op_patches[3], no_op_patches[4], no_op_patches[5], no_op_patches[6], no_op_patches[7]:
@@ -185,11 +185,11 @@ class TestPathDriftIntegration:
         )
 
         with patch.object(
-            service, "_generate_ai_status_document", return_value="# AI Status\n"
+            service, "_generate_status_brief_document", return_value="# Status Brief\n"
         ), patch.object(
             service,
-            "_generate_ai_priorities_document",
-            return_value="# AI Priorities\n",
+            "_generate_priorities_brief_document",
+            return_value="# Priorities Brief\n",
         ), patch.object(
             service, "_generate_consolidated_report", return_value="# Consolidated\n"
         ), no_op_patches[0], no_op_patches[1], no_op_patches[2], no_op_patches[3], no_op_patches[4], no_op_patches[5], no_op_patches[6], no_op_patches[7]:

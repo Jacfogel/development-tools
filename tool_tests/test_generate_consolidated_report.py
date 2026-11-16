@@ -36,8 +36,8 @@ class TestGenerateConsolidatedReport:
             mock_service_class.return_value = mock_service
             
             # Mock the report generation methods
-            mock_service._generate_ai_status_document.return_value = "# AI Status\n\nTest content"
-            mock_service._generate_ai_priorities_document.return_value = "# AI Priorities\n\nTest content"
+            mock_service._generate_status_brief_document.return_value = "# Status Brief\n\nTest content"
+            mock_service._generate_priorities_brief_document.return_value = "# Priorities Brief\n\nTest content"
             mock_service._generate_consolidated_report.return_value = "Consolidated Report\n\nTest content"
             
             # Mock create_output_file
@@ -51,8 +51,8 @@ class TestGenerateConsolidatedReport:
                 
                 # Verify results structure
                 assert isinstance(result, dict), "Result should be a dictionary"
-                assert 'ai_status' in result, "Result should have ai_status"
-                assert 'ai_priorities' in result, "Result should have ai_priorities"
+                assert 'status_brief' in result, "Result should have status_brief"
+                assert 'priorities_brief' in result, "Result should have priorities_brief"
                 assert 'consolidated_report' in result, "Result should have consolidated_report"
                 
                 # Verify service was called correctly
@@ -62,8 +62,8 @@ class TestGenerateConsolidatedReport:
                 )
                 
                 # Verify report generation methods were called
-                mock_service._generate_ai_status_document.assert_called_once()
-                mock_service._generate_ai_priorities_document.assert_called_once()
+                mock_service._generate_status_brief_document.assert_called_once()
+                mock_service._generate_priorities_brief_document.assert_called_once()
                 mock_service._generate_consolidated_report.assert_called_once()
                 
                 # Verify create_output_file was called for each report
@@ -78,8 +78,8 @@ class TestGenerateConsolidatedReport:
             mock_service = MagicMock()
             mock_service_class.return_value = mock_service
             
-            mock_service._generate_ai_status_document.return_value = "# AI Status"
-            mock_service._generate_ai_priorities_document.return_value = "# AI Priorities"
+            mock_service._generate_status_brief_document.return_value = "# Status Brief"
+            mock_service._generate_priorities_brief_document.return_value = "# Priorities Brief"
             mock_service._generate_consolidated_report.return_value = "Consolidated Report"
             
             with patch.object(consolidated_report_module, 'create_output_file') as mock_create:
@@ -105,8 +105,8 @@ class TestGenerateConsolidatedReport:
             mock_service = MagicMock()
             mock_service_class.return_value = mock_service
             
-            mock_service._generate_ai_status_document.return_value = "# AI Status"
-            mock_service._generate_ai_priorities_document.return_value = "# AI Priorities"
+            mock_service._generate_status_brief_document.return_value = "# Status Brief"
+            mock_service._generate_priorities_brief_document.return_value = "# Priorities Brief"
             mock_service._generate_consolidated_report.return_value = "Consolidated Report"
             
             with patch.object(consolidated_report_module, 'create_output_file') as mock_create:
@@ -129,8 +129,8 @@ class TestGenerateConsolidatedReport:
                 assert "development_tools/CONSOLIDATED_REPORT.md" in call_paths, "Should create CONSOLIDATED_REPORT.md"
                 
                 # Verify result paths are strings
-                assert isinstance(result['ai_status'], str), "ai_status path should be string"
-                assert isinstance(result['ai_priorities'], str), "ai_priorities path should be string"
+                assert isinstance(result['status_brief'], str), "status_brief path should be string"
+                assert isinstance(result['priorities_brief'], str), "priorities_brief path should be string"
                 assert isinstance(result['consolidated_report'], str), "consolidated_report path should be string"
     
     @pytest.mark.unit
@@ -154,7 +154,7 @@ class TestGenerateConsolidatedReport:
             mock_service_class.return_value = mock_service
             
             # Simulate report generation failure
-            mock_service._generate_ai_status_document.side_effect = Exception("Report generation failed")
+            mock_service._generate_status_brief_document.side_effect = Exception("Report generation failed")
             
             # Should raise exception
             with pytest.raises(Exception, match="Report generation failed"):
@@ -170,8 +170,8 @@ class TestGenerateConsolidatedReport:
             mock_service = MagicMock()
             mock_service_class.return_value = mock_service
             
-            mock_service._generate_ai_status_document.return_value = "# AI Status"
-            mock_service._generate_ai_priorities_document.return_value = "# AI Priorities"
+            mock_service._generate_status_brief_document.return_value = "# Status Brief"
+            mock_service._generate_priorities_brief_document.return_value = "# Priorities Brief"
             mock_service._generate_consolidated_report.return_value = "Consolidated Report"
             
             # Simulate file creation failure
@@ -191,8 +191,8 @@ class TestGenerateConsolidatedReport:
             mock_service = MagicMock()
             mock_service_class.return_value = mock_service
             
-            mock_service._generate_ai_status_document.return_value = "# AI Status"
-            mock_service._generate_ai_priorities_document.return_value = "# AI Priorities"
+            mock_service._generate_status_brief_document.return_value = "# Status Brief"
+            mock_service._generate_priorities_brief_document.return_value = "# Priorities Brief"
             mock_service._generate_consolidated_report.return_value = "Consolidated Report"
             
             with patch.object(consolidated_report_module, 'create_output_file') as mock_create:
@@ -217,12 +217,12 @@ class TestGenerateConsolidatedReport:
             mock_service = MagicMock()
             mock_service_class.return_value = mock_service
             
-            status_content = "# AI Status\n\nDetailed status content"
-            priorities_content = "# AI Priorities\n\nDetailed priorities content"
+            status_content = "# Status Brief\n\nDetailed status content"
+            priorities_content = "# Priorities Brief\n\nDetailed priorities content"
             consolidated_content = "Consolidated Report\n\nDetailed consolidated content"
             
-            mock_service._generate_ai_status_document.return_value = status_content
-            mock_service._generate_ai_priorities_document.return_value = priorities_content
+            mock_service._generate_status_brief_document.return_value = status_content
+            mock_service._generate_priorities_brief_document.return_value = priorities_content
             mock_service._generate_consolidated_report.return_value = consolidated_content
             
             with patch.object(consolidated_report_module, 'create_output_file') as mock_create:
@@ -276,8 +276,8 @@ class TestGenerateConsolidatedReport:
             mock_service = MagicMock()
             mock_service_class.return_value = mock_service
             
-            mock_service._generate_ai_status_document.return_value = "# AI Status\n\nIntegration test"
-            mock_service._generate_ai_priorities_document.return_value = "# AI Priorities\n\nIntegration test"
+            mock_service._generate_status_brief_document.return_value = "# Status Brief\n\nIntegration test"
+            mock_service._generate_priorities_brief_document.return_value = "# Priorities Brief\n\nIntegration test"
             mock_service._generate_consolidated_report.return_value = "Consolidated Report\n\nIntegration test"
             
             with patch.object(consolidated_report_module, 'create_output_file') as mock_create:
@@ -288,5 +288,5 @@ class TestGenerateConsolidatedReport:
                 )
                 
                 assert isinstance(result, dict), "Result should be a dictionary"
-                assert all(key in result for key in ['ai_status', 'ai_priorities', 'consolidated_report']), \
+                assert all(key in result for key in ['status_brief', 'priorities_brief', 'consolidated_report']), \
                     "Result should have all required keys"

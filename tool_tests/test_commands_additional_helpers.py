@@ -997,12 +997,12 @@ def test_run_status_skip_status_files_avoids_generators(
     service = AIToolsService(project_root=str(temp_project_copy))
     monkeypatch.setattr(
         service,
-        "_generate_ai_status_document",
+        "_generate_status_brief_document",
         lambda: (_ for _ in ()).throw(AssertionError("should not run")),
     )
     monkeypatch.setattr(
         service,
-        "_generate_ai_priorities_document",
+        "_generate_priorities_brief_document",
         lambda: (_ for _ in ()).throw(AssertionError("should not run")),
     )
     monkeypatch.setattr(

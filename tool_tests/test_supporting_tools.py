@@ -34,13 +34,13 @@ def test_quick_status_detection_marks_missing_files(tmp_path, quick_status_modul
     qs = quick_status_module.QuickStatus()
     qs.project_root = tmp_path
     qs.quick_status_config = {
-        "core_files": ["run_mhm.py", "core/config.py", "core/service.py", "requirements.txt"],
+        "core_files": ["run_app.py", "core/config.py", "core/service.py", "requirements.txt"],
     }
 
     for dirname in ("core", "ui", "tests", "development_tools"):
         (tmp_path / dirname).mkdir(parents=True, exist_ok=True)
 
-    for relative_path in ["run_mhm.py", "core/config.py", "requirements.txt"]:
+    for relative_path in ["run_app.py", "core/config.py", "requirements.txt"]:
         file_path = tmp_path / relative_path.replace("/", os.sep)
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.write_text("placeholder", encoding="utf-8")
@@ -125,7 +125,7 @@ def test_system_signals_reports_missing_directories(
 
     # Create mandatory core files
     core_files = [
-        "run_mhm.py",
+        "run_app.py",
         "run_headless_service.py",
         "run_tests.py",
         "core/service.py",
@@ -330,8 +330,8 @@ def test_quick_status_documentation_status_extracts_coverage_from_audit_json(
         "ai_development_docs/AI_CHANGELOG.md",
         "development_docs/CHANGELOG_DETAIL.md",
         "TODO.md",
-        "development_docs/FUNCTION_REGISTRY_DETAIL.md",
-        "development_docs/MODULE_DEPENDENCIES_DETAIL.md",
+        "development_tools/reports/FUNCTION_REGISTRY_DETAIL.md",
+        "development_tools/reports/MODULE_DEPENDENCIES_DETAIL.md",
     ]:
         doc_path = tmp_path / doc.replace("/", os.sep)
         doc_path.parent.mkdir(parents=True, exist_ok=True)
@@ -416,7 +416,7 @@ def test_quick_status_print_json_status_outputs_standard_format(quick_status_mod
     """print_json_status should print wrapped standard-format JSON."""
     qs = quick_status_module.QuickStatus()
     fake_status = {
-        "system_health": {"overall_status": "OK", "core_files": {"run_mhm.py": "OK"}},
+        "system_health": {"overall_status": "OK", "core_files": {"run_app.py": "OK"}},
         "documentation_status": {"key_files": {"README.md": "OK"}},
         "critical_issues": [],
     }

@@ -46,7 +46,7 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 # Ensure dev-tools logger routing is active even when this module is invoked directly.
-os.environ.setdefault("MHM_DEV_TOOLS_RUN", "1")
+os.environ.setdefault("DEVTOOLS_RUN", "1")
 from development_tools.config import load_external_config
 
 load_external_config()
@@ -451,8 +451,8 @@ class CoverageMetricsRegenerator:
         test_tmp_root.mkdir(parents=True, exist_ok=True)
         # Force pytest subprocesses into pure test mode (not dev-tools mode),
         # so logger path expectations in test suites remain deterministic.
-        env["MHM_DEV_TOOLS_RUN"] = "0"
-        env["MHM_TESTING"] = "1"
+        env["DEVTOOLS_RUN"] = "0"
+        env["DEVTOOLS_TESTING"] = "1"
         env["TEST_CONSOLIDATED_LOGGING"] = "1"
         env["TEST_VERBOSE_LOGS"] = "0"
         env["TEST_LOGS_DIR"] = str(test_logs_root)

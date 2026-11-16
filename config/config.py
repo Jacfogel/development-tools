@@ -714,16 +714,39 @@ def get_coverage_json_dir(project_root: Path) -> Path:
     return project_root / directory
 
 
+GENERATED_REPORTS_DIR = Path("development_tools/reports")
+
+
+def get_generated_report_path(
+    project_root: Path, filename: str, configured_path: str | Path | None = None
+) -> Path:
+    """Resolve a report location inside development_tools, including legacy configs."""
+    root = Path(project_root).resolve()
+    tools_dir = (root / "development_tools").resolve()
+    if configured_path:
+        preferred = Path(os.path.abspath(root / configured_path))
+        if preferred.is_relative_to(root / "development_tools") and preferred.resolve().is_relative_to(tools_dir):
+            return preferred
+    default = root / GENERATED_REPORTS_DIR / filename
+    if not default.resolve().is_relative_to(tools_dir):
+        raise ValueError(f"Report path must be inside development_tools: {default}")
+    return default
+
+
 def get_coverage_report_path(project_root: Path) -> Path:
-    """Resolve the detailed coverage Markdown report for the selected host."""
-    default = Path(get_paths_config()["development_docs_dir"]) / "TEST_COVERAGE_REPORT.md"
-    return project_root / _get_external_value("coverage.detail_report_path", default)
+    """Resolve the host coverage report inside development_tools."""
+    return get_generated_report_path(
+        project_root, "TEST_COVERAGE_REPORT.md",
+        _get_external_value("coverage.detail_report_path", None),
+    )
 
 
 def get_legacy_report_path(project_root: Path) -> Path:
-    """Resolve the legacy Markdown report for the selected host."""
-    default = Path(get_paths_config()["development_docs_dir"]) / "LEGACY_REFERENCE_REPORT.md"
-    return project_root / _get_external_value("legacy_cleanup.detail_report_path", default)
+    """Resolve the host legacy-reference report inside development_tools."""
+    return get_generated_report_path(
+        project_root, "LEGACY_REFERENCE_REPORT.md",
+        _get_external_value("legacy_cleanup.detail_report_path", None),
+    )
 
 
 def get_deprecation_inventory_path(project_root: Path) -> Path:
@@ -1149,7 +1172,7 @@ AUDIT_FUNCTION_REGISTRY = {
 }
 
 
-def get_analyze_function_registry_config():
+def get_analyze_function_registry_config(project_root: Path | None = None):
     """Get audit function registry configuration (from external config if available, otherwise default)."""
     external_config = _get_external_value("analyze_function_registry", None)
     result = copy.deepcopy(AUDIT_FUNCTION_REGISTRY)
@@ -1173,12 +1196,9 @@ def get_analyze_function_registry_config():
             ):
                 continue
             result[key] = value
-    result.setdefault(
-        "registry_path",
-        (
-            Path(get_paths_config()["development_docs_dir"]) / "FUNCTION_REGISTRY_DETAIL.md"
-        ).as_posix(),
-    )
+    result["registry_path"] = get_generated_report_path(
+        project_root or get_project_root(), "FUNCTION_REGISTRY_DETAIL.md", result.get("registry_path")
+    ).as_posix()
     if not result.get("priority_directories"):
         prefixes = _get_external_value("constants.local_module_prefixes", None)
         if isinstance(prefixes, list) and prefixes:
@@ -1297,14 +1317,12 @@ def get_analyze_module_refactor_candidates_config():
 
 
 # Audit module dependencies configuration
-def get_analyze_module_dependencies_config():
+def get_analyze_module_dependencies_config(project_root: Path | None = None):
     """Get audit module dependencies configuration (from external config if available, otherwise default)."""
-    result = {
-        "dependency_doc_path": (
-            Path(get_paths_config()["development_docs_dir"]) / "MODULE_DEPENDENCIES_DETAIL.md"
-        ).as_posix(),
-    }
-    result.update(_get_external_value("analyze_module_dependencies", None) or {})
+    result = dict(_get_external_value("analyze_module_dependencies", None) or {})
+    result["dependency_doc_path"] = get_generated_report_path(
+        project_root or get_project_root(), "MODULE_DEPENDENCIES_DETAIL.md", result.get("dependency_doc_path")
+    ).as_posix()
     return result
 
 
@@ -1587,13 +1605,13 @@ STATUS = {
     "check_audit_results": True,
     "generate_status_files": True,
     "dev_tools_status_files": {
-        "ai_status": "development_tools/DEV_TOOLS_STATUS.md",
-        "ai_priorities": "development_tools/DEV_TOOLS_PRIORITIES.md",
+        "status_brief": "development_tools/DEV_TOOLS_STATUS.md",
+        "priorities_brief": "development_tools/DEV_TOOLS_PRIORITIES.md",
         "consolidated_report": "development_tools/DEV_TOOLS_CONSOLIDATED_REPORT.md",
     },
     "status_files": {
-        "ai_status": "development_tools/STATUS_BRIEF.md",
-        "ai_priorities": "development_tools/PRIORITIES_BRIEF.md",
+        "status_brief": "development_tools/STATUS_BRIEF.md",
+        "priorities_brief": "development_tools/PRIORITIES_BRIEF.md",
         "consolidated_report": "development_tools/CONSOLIDATED_REPORT.md",
     },
 }
@@ -1607,7 +1625,7 @@ def get_status_config():
         for key, value in external_config.items():
             if key in {"status_files", "dev_tools_status_files"}:
                 if isinstance(value, dict):
-                    result[key].update(value)
+                    result[key].update((name, value[name]) for name in result[key] if name in value)
             else:
                 result[key] = value
     return result
@@ -1676,7 +1694,6 @@ def get_system_signals_config():
 
 
 # Optional host-project adapters. Empty module means skip product backup commands.
-# MHM sets host.backup_manager_module in development_tools_config.json.
 HOST_DEFAULTS = {
     "backup_manager_module": "",
     "backup_manager_attr": "backup_manager",

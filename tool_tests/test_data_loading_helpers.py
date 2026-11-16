@@ -256,12 +256,12 @@ def test_parse_legacy_output_extracts_headline_fields(temp_project_copy: Path):
     output = """
 Files with issues: 9
 legacy_compatibility_markers: 14
-Report saved to: development_docs/LEGACY_REFERENCE_REPORT.md
+Report saved to: development_tools/reports/LEGACY_REFERENCE_REPORT.md
 """
     parsed = service._parse_legacy_output(output)
     assert parsed["files_with_issues"] == 9
     assert parsed["legacy_markers"] == 14
-    assert parsed["report_path"] == "development_docs/LEGACY_REFERENCE_REPORT.md"
+    assert parsed["report_path"] == "development_tools/reports/LEGACY_REFERENCE_REPORT.md"
 
 
 @pytest.mark.unit

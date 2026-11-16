@@ -1,4 +1,4 @@
-"""Tests for AI_PRIORITIES quick wins formatting."""
+"""Tests for PRIORITIES_BRIEF quick wins formatting."""
 
 from pathlib import Path
 
@@ -48,7 +48,7 @@ def test_quick_wins_include_top_offenders_and_fix_commands(temp_project_copy):
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "ASCII compliance:" in doc
     assert "Heading numbering:" in doc
@@ -92,8 +92,8 @@ def test_facade_shims_contribute_to_status_priority_and_consolidated_reports(
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    status_doc = service._generate_ai_status_document()
-    priorities_doc = service._generate_ai_priorities_document()
+    status_doc = service._generate_status_brief_document()
+    priorities_doc = service._generate_priorities_brief_document()
     consolidated_doc = service._generate_consolidated_report()
 
     assert "Facade/Shim Candidates" in status_doc
@@ -105,8 +105,8 @@ def test_facade_shims_contribute_to_status_priority_and_consolidated_reports(
 
 
 @pytest.mark.unit
-def test_ai_priorities_hides_tier3_test_outcome_when_clean(temp_project_copy):
-    """AI_PRIORITIES should omit Tier 3 test outcome section when there is no action needed."""
+def test_priorities_brief_hides_tier3_test_outcome_when_clean(temp_project_copy):
+    """PRIORITIES_BRIEF should omit Tier 3 test outcome section when there is no action needed."""
     service = AIToolsService(project_root=str(temp_project_copy))
 
     payloads = {
@@ -159,7 +159,7 @@ def test_ai_priorities_hides_tier3_test_outcome_when_clean(temp_project_copy):
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "## Tier 3 Test Outcome" not in doc
     assert "Fix Tier 3 coverage run failures" not in doc
@@ -167,7 +167,7 @@ def test_ai_priorities_hides_tier3_test_outcome_when_clean(temp_project_copy):
 
 
 @pytest.mark.unit
-def test_ai_priorities_omits_tier3_test_failures_on_tier2_audit(temp_project_copy):
+def test_priorities_brief_omits_tier3_test_failures_on_tier2_audit(temp_project_copy):
     """Tier 2 audits do not run tests; stale coverage cache must not add test priorities."""
     service = AIToolsService(project_root=str(temp_project_copy))
     service.current_audit_tier = 2
@@ -195,14 +195,14 @@ def test_ai_priorities_omits_tier3_test_failures_on_tier2_audit(temp_project_cop
     service._load_coverage_summary = lambda: payloads["analyze_test_coverage"]["details"]
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Investigate and correct test failures/errors" not in doc
     assert "Tier 3 coverage orchestration reported" not in doc
 
 
 @pytest.mark.unit
-def test_ai_priorities_surfaces_cached_tier3_failures_on_tier2_audit(
+def test_priorities_brief_surfaces_cached_tier3_failures_on_tier2_audit(
     temp_project_copy,
 ):
     """Tier 2 should surface actionable Tier 3 test outcomes from cache when evidence exists."""
@@ -238,7 +238,7 @@ def test_ai_priorities_surfaces_cached_tier3_failures_on_tier2_audit(
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Investigate and correct test failures/errors" in doc
     assert "cached from last Tier 3 run" in doc
@@ -246,7 +246,7 @@ def test_ai_priorities_surfaces_cached_tier3_failures_on_tier2_audit(
 
 
 @pytest.mark.unit
-def test_ai_priorities_include_tier3_failed_tests_in_immediate_focus(temp_project_copy):
+def test_priorities_brief_include_tier3_failed_tests_in_immediate_focus(temp_project_copy):
     """Tier 3 failed tests should appear as a ranked immediate-focus priority."""
     service = AIToolsService(project_root=str(temp_project_copy))
     service.current_audit_tier = 3
@@ -303,7 +303,7 @@ def test_ai_priorities_include_tier3_failed_tests_in_immediate_focus(temp_projec
         "tier3_test_outcome"
     ]
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Investigate and correct test failures/errors" in doc
     assert "cached from last Tier 3 run" not in doc
@@ -381,8 +381,8 @@ def test_tier3_crash_metadata_surfaces_in_status_and_priorities(temp_project_cop
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    status_doc = service._generate_ai_status_document()
-    priorities_doc = service._generate_ai_priorities_document()
+    status_doc = service._generate_status_brief_document()
+    priorities_doc = service._generate_priorities_brief_document()
 
     assert "No-Parallel Classification" in status_doc
     assert "windows_status_dll_not_found" in status_doc
@@ -394,7 +394,7 @@ def test_tier3_crash_metadata_surfaces_in_status_and_priorities(temp_project_cop
 
 
 @pytest.mark.unit
-def test_ai_priorities_include_dependency_pattern_recommendations(temp_project_copy):
+def test_priorities_brief_include_dependency_pattern_recommendations(temp_project_copy):
     """Immediate focus should include dependency-pattern remediation when risks exist."""
     service = AIToolsService(project_root=str(temp_project_copy))
 
@@ -420,7 +420,7 @@ def test_ai_priorities_include_dependency_pattern_recommendations(temp_project_c
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Reduce dependency pattern risk" in doc
     assert (
@@ -434,7 +434,7 @@ def test_ai_priorities_include_dependency_pattern_recommendations(temp_project_c
 
 
 @pytest.mark.unit
-def test_ai_priorities_combine_error_handling_phase_actions(temp_project_copy):
+def test_priorities_brief_combine_error_handling_phase_actions(temp_project_copy):
     """Error-handling modernization should combine Phase 1 and Phase 2 into one priority."""
     service = AIToolsService(project_root=str(temp_project_copy))
 
@@ -465,7 +465,7 @@ def test_ai_priorities_combine_error_handling_phase_actions(temp_project_copy):
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Modernize error handling (Phase 1 + Phase 2)" in doc
     assert "Phase 1 (decorator-first): 2 function(s)" in doc
@@ -475,8 +475,8 @@ def test_ai_priorities_combine_error_handling_phase_actions(temp_project_copy):
 
 
 @pytest.mark.unit
-def test_ai_status_dependency_patterns_section_includes_top_findings(temp_project_copy):
-    """AI_STATUS should include dependency summary counts without deep details."""
+def test_status_brief_dependency_patterns_section_includes_top_findings(temp_project_copy):
+    """STATUS_BRIEF should include dependency summary counts without deep details."""
     service = AIToolsService(project_root=str(temp_project_copy))
 
     payloads = {
@@ -501,7 +501,7 @@ def test_ai_status_dependency_patterns_section_includes_top_findings(temp_projec
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_status_document()
+    doc = service._generate_status_brief_document()
 
     assert "## Dependency Patterns" in doc
     assert "**Circular Dependencies**: 2 circular dependency chain(s)" in doc
@@ -563,7 +563,7 @@ def test_consolidated_dependency_patterns_include_top_findings(temp_project_copy
 
 
 @pytest.mark.unit
-def test_ai_priorities_include_dev_tools_coverage_when_normalized_shape(temp_project_copy):
+def test_priorities_brief_include_dev_tools_coverage_when_normalized_shape(temp_project_copy):
     """DEV_TOOLS_PRIORITIES (dev-tools-scoped) should include the dev-tools coverage priority."""
     service = AIToolsService(project_root=str(temp_project_copy))
     service.dev_tools_only_mode = True
@@ -593,14 +593,14 @@ def test_ai_priorities_include_dev_tools_coverage_when_normalized_shape(temp_pro
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Raise development tools coverage" in doc
     assert "Development tools coverage is 47.0%" in doc
 
 
 @pytest.mark.unit
-def test_ai_priorities_warn_and_support_legacy_raw_dev_tools_shape(
+def test_priorities_brief_warn_and_support_legacy_raw_dev_tools_shape(
     temp_project_copy
 ):
     """Legacy raw dev-tools coverage payloads should still work with a warning."""
@@ -630,14 +630,14 @@ def test_ai_priorities_warn_and_support_legacy_raw_dev_tools_shape(
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Raise development tools coverage" in doc
     assert "Development tools coverage is 47.0%" in doc
 
 
 @pytest.mark.unit
-def test_ai_priorities_keeps_dev_tools_coverage_when_modules_below_80(
+def test_priorities_brief_keeps_dev_tools_coverage_when_modules_below_80(
     temp_project_copy,
 ):
     """Dev-tools-scoped report keeps the coverage priority when module-level coverage is below 80%."""
@@ -666,14 +666,14 @@ def test_ai_priorities_keeps_dev_tools_coverage_when_modules_below_80(
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Raise development tools coverage" in doc
     assert "remain below the 80% target" in doc
 
 
 @pytest.mark.unit
-def test_ai_priorities_omits_dev_tools_coverage_when_overall_and_modules_meet_target(
+def test_priorities_brief_omits_dev_tools_coverage_when_overall_and_modules_meet_target(
     temp_project_copy,
 ):
     """Dev-tools-scoped report omits the priority when overall >=60 and sampled modules >=80."""
@@ -707,16 +707,16 @@ def test_ai_priorities_omits_dev_tools_coverage_when_overall_and_modules_meet_ta
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Raise development tools coverage" not in doc
 
 
 @pytest.mark.unit
-def test_ai_priorities_full_audit_does_not_duplicate_dev_tools_coverage_priority(
+def test_priorities_brief_full_audit_does_not_duplicate_dev_tools_coverage_priority(
     temp_project_copy,
 ):
-    """Full-repo AI_PRIORITIES lists development_tools only under domain coverage, not as its own item."""
+    """Full-repo PRIORITIES_BRIEF lists development_tools only under domain coverage, not as its own item."""
     service = AIToolsService(project_root=str(temp_project_copy))
     assert service.dev_tools_only_mode is False
 
@@ -746,7 +746,7 @@ def test_ai_priorities_full_audit_does_not_duplicate_dev_tools_coverage_priority
     }
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Raise development tools coverage" not in doc
     assert "Raise coverage for domains below target" in doc
@@ -754,7 +754,7 @@ def test_ai_priorities_full_audit_does_not_duplicate_dev_tools_coverage_priority
 
 
 @pytest.mark.unit
-def test_ai_priorities_counts_all_low_coverage_domains_while_displaying_top_three(
+def test_priorities_brief_counts_all_low_coverage_domains_while_displaying_top_three(
     temp_project_copy,
 ):
     """Coverage priority count should include every below-target domain, not only displayed highlights."""
@@ -772,7 +772,7 @@ def test_ai_priorities_counts_all_low_coverage_domains_while_displaying_top_thre
     }
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "4 key domains remain below the 80% target" in doc
     assert (
@@ -843,10 +843,10 @@ def test_linkify_review_paths_and_json_with_parenthetical():
     )
 
     line = (
-        "Review for details: development_docs/LEGACY_REFERENCE_REPORT.md (exact locations)"
+        "Review for details: development_tools/reports/LEGACY_REFERENCE_REPORT.md (exact locations)"
     )
     out = linkify_review_paths_bullet(line)
-    assert "[LEGACY_REFERENCE_REPORT.md](../development_docs/LEGACY_REFERENCE_REPORT.md)" in out
+    assert "[LEGACY_REFERENCE_REPORT.md](reports/LEGACY_REFERENCE_REPORT.md)" in out
     assert "(exact locations)" in out
 
 
@@ -918,7 +918,7 @@ def test_quick_wins_read_documentation_placeholders_from_details(temp_project_co
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "placeholder section(s) flagged by docs scan" in doc
     assert "README.md" in doc
@@ -941,7 +941,7 @@ def test_watch_list_includes_stale_function_registry_extras(temp_project_copy):
                     "count": 3,
                     "files": {
                         "run_tests.py": ["main", "run_command"],
-                        "run_mhm.py": ["main"],
+                        "run_app.py": ["main"],
                     },
                 },
             },
@@ -955,7 +955,7 @@ def test_watch_list_includes_stale_function_registry_extras(temp_project_copy):
     service._load_coverage_summary = lambda: {}
     service._load_dev_tools_coverage = lambda: None
 
-    doc = service._generate_ai_priorities_document()
+    doc = service._generate_priorities_brief_document()
 
     assert "Stale function-registry extras" in doc
     assert "3 registry entries are documented but not found" in doc

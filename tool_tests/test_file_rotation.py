@@ -140,7 +140,7 @@ def test_create_output_file_development_tools_subdir_uses_reports_base(tmp_path,
     assert f.read_text(encoding="utf-8") == "new"
     arch = dt / "reports" / "archive"
     assert arch.exists()
-    assert any(arch.glob("AI_STATUS_*"))
+    assert any(arch.glob("STATUS_BRIEF_*"))
 
 
 @pytest.mark.unit
@@ -219,7 +219,7 @@ def test_create_output_file_status_blocked_in_test_to_real_project(
             "development_tools.config.config.get_project_root",
             return_value=str(fake_root),
         ):
-            with pytest.raises(RuntimeError, match="Cannot write AI_STATUS"):
+            with pytest.raises(RuntimeError, match="Cannot write STATUS_BRIEF"):
                 fr_mod.create_output_file(
                     status_path, "x", rotate=False, project_root=None
                 )

@@ -43,7 +43,7 @@ _PROJECT_THRESHOLDS = {
 
 @pytest.fixture
 def project_complexity_thresholds(monkeypatch):
-    """Use MHM project thresholds (100/200/300), not generic config defaults (50/100/200)."""
+    """Use test fixture thresholds (100/200/300), not generic config defaults (50/100/200)."""
     mod = sys.modules.get(functions_module.__name__) or functions_module
     for key, value in _PROJECT_THRESHOLDS.items():
         monkeypatch.setattr(mod, key, value)

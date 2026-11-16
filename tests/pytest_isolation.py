@@ -2,7 +2,7 @@
 
 Host suites keep their own pytest.ini. Tools tests must be invoked with
 ``tools_suite_pytest_args()`` so ``confcutdir`` stops at the tools test
-directory and MHM autouse fixtures never load.
+directory and host autouse fixtures never load.
 """
 
 from __future__ import annotations

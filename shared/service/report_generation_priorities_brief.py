@@ -29,8 +29,8 @@ from .report_generation_linkify import (
 
 
 
-class AIPrioritiesDocumentMixin:
-    """Mixin providing `_generate_ai_priorities_document`."""
+class PrioritiesBriefDocumentMixin:
+    """Mixin providing `_generate_priorities_brief_document`."""
 
     def _coverage_report_display_path(self) -> str:
         path = get_coverage_report_path(self.project_root)
@@ -38,14 +38,14 @@ class AIPrioritiesDocumentMixin:
             path = path.relative_to(self.project_root)
         return path.as_posix()
 
-    def _generate_ai_priorities_document(self) -> str:
+    def _generate_priorities_brief_document(self) -> str:
         """Generate AI-optimized priorities document with immediate next steps."""
         # Log data source context
         audit_tier = getattr(self, "current_audit_tier", None)
         report_paths = get_status_report_paths(
             self.project_root, dev_tools_only=self._is_dev_tools_scoped_report()
         )
-        report_path = report_paths["ai_priorities"]
+        report_path = report_paths["priorities_brief"]
         priorities_target = report_path.name
         if audit_tier:
             logger.info(
@@ -66,11 +66,11 @@ class AIPrioritiesDocumentMixin:
         if audit_in_progress and not is_legitimate_end_write:
             if not instance_flag:
                 logger.debug(
-                    "_generate_ai_priorities_document() called from NEW instance during audit! This should only happen at the end."
+                    "_generate_priorities_brief_document() called from NEW instance during audit! This should only happen at the end."
                 )
             else:
                 logger.debug(
-                    "_generate_ai_priorities_document() called during audit! This should only happen at the end."
+                    "_generate_priorities_brief_document() called during audit! This should only happen at the end."
                 )
             import traceback
 
@@ -80,7 +80,7 @@ class AIPrioritiesDocumentMixin:
         if self._is_dev_tools_scoped_report():
             lines.append("# Development Tools Priorities - Immediate Next Steps")
         else:
-            lines.append("# AI Priorities - Immediate Next Steps")
+            lines.append("# Priorities Brief - Immediate Next Steps")
         lines.append("")
         display_path = (
             report_path.relative_to(self.project_root)
@@ -767,7 +767,7 @@ class AIPrioritiesDocumentMixin:
                 "Add docstrings to missing functions": self._scoped_tool_result_path(
                     "functions", "analyze_functions"
                 ),
-                "Update function registry": "development_docs/FUNCTION_REGISTRY_DETAIL.md",
+                "Update function registry": "development_tools/reports/FUNCTION_REGISTRY_DETAIL.md",
                 "Add error handling to missing functions": self._scoped_tool_result_path(
                     "error_handling", "analyze_error_handling"
                 ),

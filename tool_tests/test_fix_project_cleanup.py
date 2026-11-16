@@ -240,7 +240,7 @@ class TestProjectCleanup:
         timings = dt / "reports" / "scopes" / "full" / "jsons" / "tool_timings.json"
         timings.write_text("{}")
 
-        archived = dt / "reports" / "archive" / "AI_STATUS_2026-04-03_000000_0001.md"
+        archived = dt / "reports" / "archive" / "STATUS_BRIEF_2026-04-03_000000_0001.md"
         archived.parent.mkdir(parents=True, exist_ok=True)
         archived.write_text("# archived")
 
