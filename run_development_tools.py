@@ -277,7 +277,7 @@ def _preflight_handle_stale_audit_locks(project_root: Path) -> tuple[bool, int]:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Development tools command-line interface. Shorthand: use run_dev_tools.py instead of run_development_tools.py",
+        description="Development tools command-line interface.",
         add_help=True,
     )
     parser.add_argument("command", nargs="?", help="Command to execute")
@@ -294,7 +294,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--config-path",
         type=str,
         default=None,
-        help="Path to config file (default: use built-in config)",
+        help="Override the launcher or project configuration file",
     )
     parser.add_argument(
         "--clear-cache",
@@ -325,16 +325,9 @@ def _print_available_commands() -> None:
             )
         print()
 
-    print(
-        "Use `python development_tools/run_development_tools.py <command> --help` for command-specific options."
-    )
-    print(
-        "Use `python development_tools/run_development_tools.py help` for comprehensive help."
-    )
-    print()
-    print(
-        "Note: You can use the shorter alias `run_dev_tools.py` instead of `run_development_tools.py`"
-    )
+    script = globals().get("CLI_SCRIPT", "development_tools/run_development_tools.py")
+    print(f"Run `python {script} audit --quick` for a quick project check.")
+    print(f"Run `python {script} <command> --help` for command-specific options.")
 
 
 def main(argv=None) -> int:
@@ -404,7 +397,7 @@ def main(argv=None) -> int:
         full_parser.print_help()
         print()
         _print_available_commands()
-        return 1
+        return 0 if not remaining_args or remaining_args == ["--help"] or remaining_args == ["-h"] else 2
 
     commands = COMMAND_REGISTRY
 

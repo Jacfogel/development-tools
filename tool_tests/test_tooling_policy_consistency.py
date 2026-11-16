@@ -181,14 +181,15 @@ def _collect_direct_core_imports(project_root: Path) -> list[str]:
 
 
 @pytest.mark.unit
-def test_github_tooling_policy_job_uses_tools_pytest_ini():
-    project_root = Path(__file__).resolve().parents[2]
-    workflow = (
-        project_root / ".github" / "workflows" / "logging-enforcement.yml"
-    ).read_text(encoding="utf-8")
-    assert "-c development_tools/pytest.ini" in workflow
-    assert "--rootdir=." in workflow
-    assert "--confcutdir=development_tools/tool_tests" in workflow
+def test_tools_pytest_arguments_use_isolated_config():
+    from development_tools.tests.pytest_isolation import tools_suite_pytest_args
+
+    assert tools_suite_pytest_args() == [
+        "-c",
+        "development_tools/pytest.ini",
+        "--rootdir=.",
+        "--confcutdir=development_tools/tool_tests",
+    ]
 
 
 @pytest.mark.unit
@@ -283,13 +284,9 @@ def test_command_doc_parity_policy():
     cli_module = load_development_tools_module("shared.cli_interface")
     active_commands = set(cli_module.COMMAND_REGISTRY.keys())
 
-    ai_doc_commands = _extract_documented_commands(
-        project_root / "development_tools" / "AI_DEVELOPMENT_TOOLS_GUIDE.md"
+    documented_commands = _extract_documented_commands(
+        project_root / "development_tools" / "README.md"
     )
-    human_doc_commands = _extract_documented_commands(
-        project_root / "development_tools" / "DEVELOPMENT_TOOLS_GUIDE.md"
-    )
-    documented_commands = ai_doc_commands | human_doc_commands
 
     aliases_not_required_in_docs = {"clean-up"}
     expected_documented = active_commands - aliases_not_required_in_docs
@@ -374,7 +371,7 @@ def test_command_groups_match_development_tools_guide_sections():
     cli_module = load_development_tools_module("shared.cli_interface")
     metadata_module = load_development_tools_module("shared.tool_metadata")
     guide_groups = _extract_guide_commands_by_group(
-        project_root / "development_tools" / "DEVELOPMENT_TOOLS_GUIDE.md"
+        project_root / "development_tools" / "README.md"
     )
     # Aliases may appear in guide prose without living in COMMAND_GROUPS.
     guide_aliases_ok = {"full-audit", "clean-up"}
@@ -436,10 +433,7 @@ def test_tooling_policy_runtime_budget():
     _build_command_flag_inventory(cli_module)
     _build_runner_flag_inventory(project_root)
     _extract_documented_commands(
-        project_root / "development_tools" / "AI_DEVELOPMENT_TOOLS_GUIDE.md"
-    )
-    _extract_documented_commands(
-        project_root / "development_tools" / "DEVELOPMENT_TOOLS_GUIDE.md"
+        project_root / "development_tools" / "README.md"
     )
     _collect_non_compliant_scanners(project_root)
     metadata_module.get_command_groups()

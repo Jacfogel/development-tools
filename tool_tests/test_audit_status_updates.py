@@ -67,8 +67,8 @@ def test_quick_audit_writes_each_core_status_file_once(tmp_path, monkeypatch):
     # (Do not wrap create_output_file — coverage/subprocess runs can bind a different module copy.)
     out = proj / "development_tools"
     for name, prefix in (
-        ("AI_STATUS.md", "# AI Status"),
-        ("AI_PRIORITIES.md", "# AI Priorities"),
+        ("STATUS_BRIEF.md", "# AI Status"),
+        ("PRIORITIES_BRIEF.md", "# AI Priorities"),
         ("CONSOLIDATED_REPORT.md", "# Consolidated"),
     ):
         path = out / name

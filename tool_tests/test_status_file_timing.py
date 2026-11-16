@@ -2,7 +2,7 @@
 Test to verify status files are only written at the end of audit, not mid-audit.
 
 This test monitors file modification times during audit execution to confirm
-that AI_STATUS.md, AI_PRIORITIES.md, and CONSOLIDATED_REPORT.md are only
+that STATUS_BRIEF.md, PRIORITIES_BRIEF.md, and CONSOLIDATED_REPORT.md are only
 written once at the end, not during tool execution.
 """
 
@@ -42,8 +42,8 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
     project_root.mkdir(parents=True, exist_ok=True)
     
     # Create status file paths
-    ai_status_file = project_root / "development_tools" / "AI_STATUS.md"
-    ai_priorities_file = project_root / "development_tools" / "AI_PRIORITIES.md"
+    ai_status_file = project_root / "development_tools" / "STATUS_BRIEF.md"
+    ai_priorities_file = project_root / "development_tools" / "PRIORITIES_BRIEF.md"
     consolidated_file = project_root / "development_tools" / "CONSOLIDATED_REPORT.md"
     
     config_path = None
@@ -111,17 +111,17 @@ def test_status_files_written_only_at_end_of_audit(tmp_path, custom_paths):
     assert result is not None, "Audit should complete and return a result"
     
     if custom_paths:
-        assert not (project_root / "development_tools" / "AI_STATUS.md").exists()
+        assert not (project_root / "development_tools" / "STATUS_BRIEF.md").exists()
 
     # Verify files exist (they should be created even if audit had some failures)
-    assert ai_status_file.exists(), f"AI_STATUS.md should exist after audit. Path: {ai_status_file}"
-    assert ai_priorities_file.exists(), f"AI_PRIORITIES.md should exist after audit. Path: {ai_priorities_file}"
+    assert ai_status_file.exists(), f"STATUS_BRIEF.md should exist after audit. Path: {ai_status_file}"
+    assert ai_priorities_file.exists(), f"PRIORITIES_BRIEF.md should exist after audit. Path: {ai_priorities_file}"
     assert consolidated_file.exists(), f"CONSOLIDATED_REPORT.md should exist after audit. Path: {consolidated_file}"
     
     # Get final modification times
     final_mtimes = {
-        'AI_STATUS.md': ai_status_file.stat().st_mtime,
-        'AI_PRIORITIES.md': ai_priorities_file.stat().st_mtime,
+        'STATUS_BRIEF.md': ai_status_file.stat().st_mtime,
+        'PRIORITIES_BRIEF.md': ai_priorities_file.stat().st_mtime,
         'CONSOLIDATED_REPORT.md': consolidated_file.stat().st_mtime
     }
     
@@ -155,8 +155,8 @@ def test_status_files_not_written_during_tool_execution(tmp_path):
     project_root.mkdir(parents=True, exist_ok=True)
     
     # Create status file paths
-    ai_status_file = project_root / "development_tools" / "AI_STATUS.md"
-    ai_priorities_file = project_root / "development_tools" / "AI_PRIORITIES.md"
+    ai_status_file = project_root / "development_tools" / "STATUS_BRIEF.md"
+    ai_priorities_file = project_root / "development_tools" / "PRIORITIES_BRIEF.md"
     consolidated_file = project_root / "development_tools" / "CONSOLIDATED_REPORT.md"
     
     # Remove any existing status files
@@ -176,6 +176,6 @@ def test_status_files_not_written_during_tool_execution(tmp_path):
         service.run_analyze_documentation()
     
     # Verify status files were NOT created by individual tools
-    assert not ai_status_file.exists(), "AI_STATUS.md should not be created by individual tools"
-    assert not ai_priorities_file.exists(), "AI_PRIORITIES.md should not be created by individual tools"
+    assert not ai_status_file.exists(), "STATUS_BRIEF.md should not be created by individual tools"
+    assert not ai_priorities_file.exists(), "PRIORITIES_BRIEF.md should not be created by individual tools"
     assert not consolidated_file.exists(), "CONSOLIDATED_REPORT.md should not be created by individual tools"

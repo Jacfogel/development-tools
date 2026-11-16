@@ -137,13 +137,13 @@ def test_inventory_guard_ignores_generated_reports(tmp_path, monkeypatch):
     inventory_path.parent.mkdir(parents=True, exist_ok=True)
     inventory_path.write_text('{"active_or_candidate_inventory": [], "removed_inventory": []}', encoding="utf-8")
 
-    report_file = tmp_path / "development_tools" / "AI_PRIORITIES.md"
+    report_file = tmp_path / "development_tools" / "PRIORITIES_BRIEF.md"
     report_file.parent.mkdir(parents=True, exist_ok=True)
     report_file.write_text("placeholder\n", encoding="utf-8")
 
     def fake_run(cmd, **kwargs):
         if cmd[:3] == ["git", "status", "--porcelain"]:
-            return _completed(stdout=" M development_tools/AI_PRIORITIES.md\n")
+            return _completed(stdout=" M development_tools/PRIORITIES_BRIEF.md\n")
         if cmd[:2] == ["git", "diff"]:
             return _completed(stdout=_legacy_marker_line())
         raise AssertionError(f"Unexpected command: {cmd}")

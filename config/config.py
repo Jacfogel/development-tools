@@ -55,12 +55,8 @@ def load_external_config(config_path: str | None = None) -> bool:
             _external_config = None
             _config_file_path = None
             return False
-        root = project_root
-        host_file = root / "development_docs/devtools/development_tools_config.json"
-        example_file = root / "development_tools/config/development_tools_config.json.example"
-        if host_file.is_file():
-            config_file = host_file
-        elif example_file.is_file():
+        example_file = project_root / "development_tools/config/development_tools_config.json.example"
+        if example_file.is_file():
             config_file = example_file
         elif _external_config is not None:
             return True
@@ -734,11 +730,7 @@ def get_deprecation_inventory_path(project_root: Path) -> Path:
     """Resolve the inventory shared by the legacy scanner and report."""
     default = "development_tools/config/jsons/DEPRECATION_INVENTORY.json"
     configured = _get_external_value("legacy_cleanup.deprecation_inventory_file", default)
-    inventory = project_root / configured
-    host_inventory = project_root / "development_docs/devtools/DEPRECATION_INVENTORY.json"
-    if configured == default and not inventory.exists() and host_inventory.is_file():
-        return host_inventory
-    return inventory
+    return project_root / configured
 
 
 SUITE_PROFILES: dict[str, dict[str, Any]] = {
@@ -1600,8 +1592,8 @@ STATUS = {
         "consolidated_report": "development_tools/DEV_TOOLS_CONSOLIDATED_REPORT.md",
     },
     "status_files": {
-        "ai_status": "development_tools/AI_STATUS.md",
-        "ai_priorities": "development_tools/AI_PRIORITIES.md",
+        "ai_status": "development_tools/STATUS_BRIEF.md",
+        "ai_priorities": "development_tools/PRIORITIES_BRIEF.md",
         "consolidated_report": "development_tools/CONSOLIDATED_REPORT.md",
     },
 }

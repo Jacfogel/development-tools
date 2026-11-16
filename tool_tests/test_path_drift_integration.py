@@ -97,7 +97,7 @@ class TestPathDriftIntegration:
     @pytest.mark.integration
     @pytest.mark.slow
     def test_path_drift_appears_in_ai_status(self, tmp_path):
-        """Run audit with path drift issues and verify they appear in AI_STATUS.md."""
+        """Run audit with path drift issues and verify they appear in STATUS_BRIEF.md."""
         project_root = tmp_path / "test_project"
         project_root.mkdir()
 
@@ -144,8 +144,8 @@ class TestPathDriftIntegration:
                     service.run_audit(quick=True)
 
         # Verify status file was created
-        status_file = project_root / "development_tools" / "AI_STATUS.md"
-        assert status_file.exists(), "AI_STATUS.md should exist after audit"
+        status_file = project_root / "development_tools" / "STATUS_BRIEF.md"
+        assert status_file.exists(), "STATUS_BRIEF.md should exist after audit"
         
         # Read status content
         status_content = status_file.read_text()

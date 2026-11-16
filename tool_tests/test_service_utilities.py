@@ -40,9 +40,9 @@ def test_basic_formatting_and_parsing_helpers():
 @pytest.mark.unit
 def test_format_repo_paths_as_markdown_links_normalizes_and_links():
     out = utilities_module.format_repo_paths_as_markdown_links(
-        [r"development_tools\DEVELOPMENT_TOOLS_GUIDE.md"], limit=3
+        [r"development_tools\README.md"], limit=3
     )
-    assert out == "[DEVELOPMENT_TOOLS_GUIDE.md](development_tools/DEVELOPMENT_TOOLS_GUIDE.md)"
+    assert out == "[README.md](development_tools/README.md)"
     overflow = utilities_module.format_repo_paths_as_markdown_links(
         ["a/x.md", "b/y.md", "c/z.md", "d/w.md"], limit=2
     )

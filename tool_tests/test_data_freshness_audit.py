@@ -90,7 +90,7 @@ def test_check_generated_reports_for_deleted_files_detects_references(
     """Report scanner should identify deleted-file references in markdown reports."""
     report_dir = temp_output_dir / "development_tools"
     report_dir.mkdir(parents=True, exist_ok=True)
-    (report_dir / "AI_STATUS.md").write_text(
+    (report_dir / "STATUS_BRIEF.md").write_text(
         "Found reference: development_tools/shared/operations.py\n",
         encoding="utf-8",
     )
@@ -101,7 +101,7 @@ def test_check_generated_reports_for_deleted_files_detects_references(
     )
 
     assert issues == [
-        ("development_tools/shared/operations.py", "Found in AI_STATUS.md")
+        ("development_tools/shared/operations.py", "Found in STATUS_BRIEF.md")
     ]
 
 
@@ -114,7 +114,7 @@ def test_audit_data_freshness_returns_expected_summary(
     """Top-level audit should aggregate cache/report/code issue counts."""
     report_dir = temp_output_dir / "development_tools"
     report_dir.mkdir(parents=True, exist_ok=True)
-    (report_dir / "AI_STATUS.md").write_text(
+    (report_dir / "STATUS_BRIEF.md").write_text(
         "development_tools/shared/operations.py\n",
         encoding="utf-8",
     )

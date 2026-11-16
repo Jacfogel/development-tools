@@ -356,7 +356,7 @@ def test_run_analyze_functions_parses_and_saves_json(temp_project_copy, monkeypa
         ("development_docs/changelog_history/2024.md", True),
         ("TODO.md", True),
         ("development_docs/PLANS.md", True),
-        ("development_tools/AI_PRIORITIES.md", True),
+        ("development_tools/PRIORITIES_BRIEF.md", True),
         ("development_tools/AI_DEV_TOOLS_IMPROVEMENT_PLAN.md", True),
         ("plan_migration.md", True),
         ("development_tools/shared/service/core.py", False),

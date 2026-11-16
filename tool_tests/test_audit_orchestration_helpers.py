@@ -46,11 +46,11 @@ def test_get_status_file_mtimes_ignores_invalid_status_file_mapping(tmp_path: Pa
     monkeypatch.setattr(dev_config, "_external_config", {"status": {"status_files": None}})
     status_dir = tmp_path / "development_tools"
     status_dir.mkdir(parents=True, exist_ok=True)
-    (status_dir / "AI_STATUS.md").write_text("ok", encoding="utf-8")
+    (status_dir / "STATUS_BRIEF.md").write_text("ok", encoding="utf-8")
 
     mtimes = audit_module._get_status_file_mtimes(tmp_path)
-    assert mtimes["AI_STATUS.md"] > 0
-    assert mtimes["AI_PRIORITIES.md"] == 0.0
+    assert mtimes["STATUS_BRIEF.md"] > 0
+    assert mtimes["PRIORITIES_BRIEF.md"] == 0.0
 
 
 @pytest.mark.unit
@@ -58,12 +58,12 @@ def test_get_status_file_mtimes_uses_default_paths(tmp_path: Path):
     """Default status-file paths resolve under the selected project root."""
     status_dir = tmp_path / "development_tools"
     status_dir.mkdir(parents=True, exist_ok=True)
-    (status_dir / "AI_STATUS.md").write_text("status", encoding="utf-8")
+    (status_dir / "STATUS_BRIEF.md").write_text("status", encoding="utf-8")
     (status_dir / "CONSOLIDATED_REPORT.md").write_text("report", encoding="utf-8")
 
     mtimes = audit_module._get_status_file_mtimes(tmp_path)
-    assert mtimes["AI_STATUS.md"] > 0
-    assert mtimes["AI_PRIORITIES.md"] == 0.0
+    assert mtimes["STATUS_BRIEF.md"] > 0
+    assert mtimes["PRIORITIES_BRIEF.md"] == 0.0
     assert mtimes["CONSOLIDATED_REPORT.md"] > 0
 
 
@@ -75,12 +75,12 @@ def test_get_status_file_mtimes_dev_tools_only_targets_dev_tools_outputs(
     status_dir = tmp_path / "development_tools"
     status_dir.mkdir(parents=True, exist_ok=True)
     (status_dir / "DEV_TOOLS_STATUS.md").write_text("s", encoding="utf-8")
-    (status_dir / "AI_STATUS.md").write_text("legacy", encoding="utf-8")
+    (status_dir / "STATUS_BRIEF.md").write_text("legacy", encoding="utf-8")
 
     mtimes = audit_module._get_status_file_mtimes(tmp_path, dev_tools_only=True)
     assert mtimes["DEV_TOOLS_STATUS.md"] > 0
     assert mtimes["DEV_TOOLS_PRIORITIES.md"] == 0.0
-    assert "AI_STATUS.md" not in mtimes
+    assert "STATUS_BRIEF.md" not in mtimes
 
 
 @pytest.mark.unit

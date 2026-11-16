@@ -16,8 +16,8 @@ def test_fixture_status_files_have_valid_metadata() -> None:
     """
     fixture_root = Path("tests/fixtures/development_tools_demo")
     files = [
-        fixture_root / "AI_STATUS.md",
-        fixture_root / "AI_PRIORITIES.md",
+        fixture_root / "STATUS_BRIEF.md",
+        fixture_root / "PRIORITIES_BRIEF.md",
         fixture_root / "CONSOLIDATED_REPORT.md",
     ]
     existing = [f for f in files if f.exists()]

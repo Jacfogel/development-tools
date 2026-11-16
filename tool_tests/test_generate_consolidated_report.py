@@ -1,8 +1,8 @@
 """
 Tests for generate_consolidated_report.py.
 
-Tests consolidated report generation functionality including AI_STATUS.md,
-AI_PRIORITIES.md, and CONSOLIDATED_REPORT.md generation.
+Tests consolidated report generation functionality including STATUS_BRIEF.md,
+PRIORITIES_BRIEF.md, and CONSOLIDATED_REPORT.md generation.
 """
 
 import pytest
@@ -124,8 +124,8 @@ class TestGenerateConsolidatedReport:
                 )
                 
                 # Verify correct paths were used
-                assert "development_tools/AI_STATUS.md" in call_paths, "Should create AI_STATUS.md"
-                assert "development_tools/AI_PRIORITIES.md" in call_paths, "Should create AI_PRIORITIES.md"
+                assert "development_tools/STATUS_BRIEF.md" in call_paths, "Should create STATUS_BRIEF.md"
+                assert "development_tools/PRIORITIES_BRIEF.md" in call_paths, "Should create PRIORITIES_BRIEF.md"
                 assert "development_tools/CONSOLIDATED_REPORT.md" in call_paths, "Should create CONSOLIDATED_REPORT.md"
                 
                 # Verify result paths are strings
@@ -242,14 +242,14 @@ class TestGenerateConsolidatedReport:
                 assert len(call_contents) == 3, "Should have 3 file creation calls"
                 
                 # Find each call by path
-                status_call = next((c for c in call_contents if "AI_STATUS.md" in c[0]), None)
-                priorities_call = next((c for c in call_contents if "AI_PRIORITIES.md" in c[0]), None)
+                status_call = next((c for c in call_contents if "STATUS_BRIEF.md" in c[0]), None)
+                priorities_call = next((c for c in call_contents if "PRIORITIES_BRIEF.md" in c[0]), None)
                 consolidated_call = next((c for c in call_contents if "CONSOLIDATED_REPORT.md" in c[0]), None)
                 
-                assert status_call is not None, "Should have AI_STATUS.md call"
+                assert status_call is not None, "Should have STATUS_BRIEF.md call"
                 assert status_call[1] == status_content, "Status content should match"
                 
-                assert priorities_call is not None, "Should have AI_PRIORITIES.md call"
+                assert priorities_call is not None, "Should have PRIORITIES_BRIEF.md call"
                 assert priorities_call[1] == priorities_content, "Priorities content should match"
                 
                 assert consolidated_call is not None, "Should have CONSOLIDATED_REPORT.md call"

@@ -134,7 +134,7 @@ def test_create_output_file_development_tools_subdir_uses_reports_base(tmp_path,
     monkeypatch.delenv("DISABLE_LOG_ROTATION", raising=False)
     dt = tmp_path / "development_tools"
     dt.mkdir()
-    f = dt / "AI_STATUS.md"
+    f = dt / "STATUS_BRIEF.md"
     f.write_text("old", encoding="utf-8")
     fr_mod.create_output_file(f, "new", rotate=True, project_root=None)
     assert f.read_text(encoding="utf-8") == "new"
@@ -211,7 +211,7 @@ def test_create_output_file_status_blocked_in_test_to_real_project(
     monkeypatch.delenv("DISABLE_LOG_ROTATION", raising=False)
     fake_root = tmp_path / "realproj"
     (fake_root / "development_tools").mkdir(parents=True)
-    status_path = fake_root / "development_tools" / "AI_STATUS.md"
+    status_path = fake_root / "development_tools" / "STATUS_BRIEF.md"
     # Under pytest, paths usually match path_looks_like_test_directory; force False
     # so the real-project vs test isolation branch is exercised without leaving tests/.
     with patch.object(fr_mod, "path_looks_like_test_directory", return_value=False):
