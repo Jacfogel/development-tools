@@ -229,7 +229,7 @@ Pipeline artifacts:
 - **STATUS_BRIEF.md**: High-level summary including Function Docstring Coverage (with missing count) and Registry Gaps (separate metrics)
 - **PRIORITIES_BRIEF.md**: Actionable priorities with prioritized example lists (functions and handler classes) using ",... +N" format when there are more items
 - **CONSOLIDATED_REPORT.md**: Comprehensive details including all metrics from AI_STATUS plus detailed example lists in the Function Patterns section
-- Human-facing: [FUNCTION_REGISTRY_DETAIL.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/FUNCTION_REGISTRY_DETAIL.md), [MODULE_DEPENDENCIES_DETAIL.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/MODULE_DEPENDENCIES_DETAIL.md), [LEGACY_REFERENCE_REPORT.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/LEGACY_REFERENCE_REPORT.md)
+- Human-facing: [function registry detail](https://github.com/Jacfogel/MHM/blob/main/development_docs/FUNCTION_REGISTRY_DETAIL.md), [module dependencies detail](https://github.com/Jacfogel/MHM/blob/main/development_docs/MODULE_DEPENDENCIES_DETAIL.md), [legacy reference report](https://github.com/Jacfogel/MHM/blob/main/development_docs/LEGACY_REFERENCE_REPORT.md)
 - Coverage: `development_tools/tests/jsons/coverage.json`, `development_tools/tests/jsons/coverage_dev_tools.json`, `development_tools/tests/coverage_html/`, `development_tools/reports/archive/coverage_artifacts/<timestamp>/`
 - Cached snapshots: `status` loads data from `reports/analysis_detailed_results.json` (complexity, validation, system signals); confirm timestamps before trusting
 
@@ -252,14 +252,14 @@ Pipeline artifacts:
 - Report generation code accesses data from `details` section
 - This standardization enables consistent data aggregation, easier tool integration, and simplified report generation.
 
-**Audit completion lines (`Completed <tool>: PASS issues=N`)** (see also [HOW_TO_RUN.md](https://github.com/Jacfogel/MHM/blob/main/HOW_TO_RUN.md#516-completion-log-lines-issues), section 5.1.6. "Completion log lines (`issues=`)"):
+**Audit completion lines (`Completed <tool>: PASS issues=N`)** (see also [how to run](https://github.com/Jacfogel/MHM/blob/main/HOW_TO_RUN.md#516-completion-log-lines-issues), section 5.1.6. "Completion log lines (`issues=`)"):
 
 - **`PASS` / `FAIL`** indicates whether the orchestration run for that tool **completed successfully** (`success` in the tool result), not whether `total_issues` is zero.
 - When present, **`issues=N`** copies **`data.summary.total_issues`** from the tool payload (same schema as the JSON block above). For many tools that number is a **metric total** (e.g. functions counted in complexity bands, documentation rows flagged), not a count of subprocess failures.
 - **How counts reach reports**: `PRIORITIES_BRIEF.md` is a filtered action queue, not a dump of `issues=`. Documentation placeholders/duplicates/artifacts are read from `analyze_documentation` **`details`** and become Quick Wins (`TODO.md` itself is skipped; fenced/inline code and changelog files are not treated as placeholders). Function-registry **missing** rows are Immediate Focus; **extra** (stale) rows are Watch List. Package-export `issues` count names imported via `from package import Name` that are missing from `__all__`/re-exports (submodule imports and unused public names are not missing exports).
 - For other **per-tool meanings** and remaining report surfaces, see [AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md](https://github.com/Jacfogel/MHM/blob/main/archive/AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md) Section 3.21.
 
-**When to run each command**: See "Standard Audit Recipe" section in [AI_DEVELOPMENT_WORKFLOW.md](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_DEVELOPMENT_WORKFLOW.md#10-standard-audit-recipe) for guidance on day-to-day checks (`audit`), pre-merge/pre-release checks (`audit --full`), and documentation work (`doc-sync`, `docs`).
+**When to run each command**: See "Standard Audit Recipe" section in [ai development workflow](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_DEVELOPMENT_WORKFLOW.md#10-standard-audit-recipe) for guidance on day-to-day checks (`audit`), pre-merge/pre-release checks (`audit --full`), and documentation work (`doc-sync`, `docs`).
 
 Ensure directories listed in `development_tools/shared/constants.py` remain accurate so reports resolve predictably.
 
@@ -339,7 +339,7 @@ Tools are organized by domain (functions/, docs/, tests/, etc.) and follow these
 | analyze_module_refactor_candidates.py | supporting | partial | Identifies large modules (by line or function count) as candidates for splitting into smaller modules. |
 | analyze_function_patterns.py | core | stable | Analyzes function patterns (handlers, managers, factories, etc.) for AI consumption. |
 | generate_function_registry.py | core | stable | Builds the authoritative function registry via AST parsing.
-| analyze_documentation.py | supporting | partial | Secondary doc analysis that focuses on corruption/overlap. Placeholder/duplicate/artifact hits from `details` surface as AI_PRIORITIES Quick Wins ([TODO.md](https://github.com/Jacfogel/MHM/blob/main/TODO.md) skipped). |
+| analyze_documentation.py | supporting | partial | Secondary doc analysis that focuses on corruption/overlap. Placeholder/duplicate/artifact hits from `details` surface as AI_PRIORITIES Quick Wins ([todo](https://github.com/Jacfogel/MHM/blob/main/TODO.md) skipped). |
 | analyze_function_registry.py | supporting | partial | Validates generated function registry output. Missing rows are Immediate Focus; extra (stale) rows are Watch List. |
 | analyze_module_dependencies.py | supporting | partial | Cross-checks generated dependency graphs for accuracy. |
 | analyze_package_exports.py | supporting | partial | Flags names imported via `from package import Name` that are missing from `__all__` or package re-exports. Submodule imports and unused public module names are not missing exports. |
@@ -363,7 +363,7 @@ Keep this table synchronized with `shared/tool_metadata.py` and update both when
 
 ## 5. Operating Standards and Maintenance
 
-- Follow the audit-first workflow (see section 10. "Standard Audit Recipe" in [AI_DEVELOPMENT_WORKFLOW.md](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_DEVELOPMENT_WORKFLOW.md#10-standard-audit-recipe)) before touching documentation or infrastructure
+- Follow the audit-first workflow (see section 10. "Standard Audit Recipe" in [ai development workflow](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_DEVELOPMENT_WORKFLOW.md#10-standard-audit-recipe)) before touching documentation or infrastructure
 - Keep the standard exclusions + config aligned so `.ruff_cache`, `mhm.egg-info`, `scripts`, `tests/ai/results`, and `tests/coverage_html` are skipped by the majority of analyzer runs.
 - **Duplicate function analysis** (`development_tools/functions/analyze_duplicate_functions.py`):
   - **Exclusion**: Prefer `# devtools: ignore[duplicate-functions]: <reason>` near the function. Legacy aliases still work: `# duplicate_functions_exclude` and `# duplicate functions exclude`.
@@ -379,7 +379,7 @@ Keep this table synchronized with `shared/tool_metadata.py` and update both when
 - **Test Coverage Caching**:
 - **Coverage Analysis Caching**: `tests/analyze_test_coverage.py` Caches analysis results based on coverage JSON file mtime, saving ~2s on repeated analysis when coverage data hasn't changed.
 - **Test-file coverage caching (Integrated, enabled by default)**: `tests/test_file_coverage_cache.py` uses `tests/domain_mapper.py` (`DomainMapper`) to map source directories to test files. When a domain changes, only the test files that cover that domain are re-run, and cached coverage is merged for unchanged tests. Cache file: `development_tools/tests/jsons/test_file_coverage_cache.json`. Disable with `--no-domain-cache` (still merges with the last good `coverage.json` if the fresh snapshot collapses, so a partial run cannot publish 10-30% as official). Core's mapped test directory is `tests/core/` (plus `@pytest.mark.core`); `tests/unit/` is a category folder and is not treated as the core domain. `domain_dependencies` defaults are empty, so a source edit does not expand into other product domains. Test-file cache keys are normalized to forward slashes so Windows path separators cannot make cached files look new.
-- **Doc-sync result freshness**: Documentation subchecks (including path-drift) compare mtimes against scoped JSON at `development_tools/docs/jsons/scopes/<full|dev_tools>/`, not the pre-scopes flat `docs/jsons/` path. Freshness includes both [AI_CHANGELOG.md](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_CHANGELOG.md) and [CHANGELOG_DETAIL.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/CHANGELOG_DETAIL.md). Changelog trim and TODO classification run before Tier 2 doc-sync so those edits do not self-invalidate the next audit. Generated coverage/legacy reports remain excluded (still rewritten after the scan).
+- **Doc-sync result freshness**: Documentation subchecks (including path-drift) compare mtimes against scoped JSON at `development_tools/docs/jsons/scopes/<full|dev_tools>/`, not the pre-scopes flat `docs/jsons/` path. Freshness includes both [ai changelog](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_CHANGELOG.md) and [changelog detail](https://github.com/Jacfogel/MHM/blob/main/development_docs/CHANGELOG_DETAIL.md). Changelog trim and TODO classification run before Tier 2 doc-sync so those edits do not self-invalidate the next audit. Generated coverage/legacy reports remain excluded (still rewritten after the scan).
 - **Failure-aware test-file invalidation**: `tests/test_file_coverage_cache.py` persists run status (`last_run_ok`, parallel/no-parallel status) and `last_failed_domains`. On a failed previous run, invalidation is domain-scoped when failed domains are known; otherwise all domains are invalidated. Missing no-parallel coverage invalidates all domains.
 - **Tool/config-aware test-file invalidation**: `tests/test_file_coverage_cache.py` stores `tool_hash`, tool mtimes, config mtime, and config content hash. Tool changes or a real config-content change force global invalidation; a timestamp-only rewrite of `development_tools_config.json` does not.
 - **Dev tools coverage caching (Integrated, enabled by default)**: `tests/dev_tools_coverage_cache.py` caches development_tools coverage JSON keyed by dev tools source mtimes and config content hash. Cache file: `development_tools/tests/jsons/dev_tools_coverage_cache.json`. Disable with `--no-domain-cache`.
@@ -402,7 +402,7 @@ Keep this table synchronized with `shared/tool_metadata.py` and update both when
 - `development_tools/config/config.py` defines production / development / testing contexts; commands must honor the active context.
 - Never hardcode project paths - always resolve via `shared/common.py` helpers.
 - Run `python development_tools/run_development_tools.py doc-sync` after documentation edits to ensure heading parity and ASCII compliance.
-- Treat experimental tools (`docs/fix_version_sync.py`, `functions/fix_function_docstrings.py`, etc.) as opt-in: dry-run first, capture logs, and record findings in [TODO.md](https://github.com/Jacfogel/MHM/blob/main/TODO.md) or the improvement plan.
+- Treat experimental tools (`docs/fix_version_sync.py`, `functions/fix_function_docstrings.py`, etc.) as opt-in: dry-run first, capture logs, and record findings in [todo](https://github.com/Jacfogel/MHM/blob/main/TODO.md) or the improvement plan.
 - Keep file organization portable (mirroring `development_tools/`, `ai_development_docs/`, `development_docs/`, `development_tools/reports/archive/`, `development_tools/tests/logs/`) to support eventual extraction of the suite. The baseline structure should remain:
 - Use config-driven backup policy workflows (`backup inventory`, `backup retention`, `backup drill`, `backup verify`) so project-specific backup paths stay declared in `development_tools/config/development_tools_config.json` rather than hardcoded in tool logic.
 
@@ -492,7 +492,7 @@ All generated JSON files must include standardized metadata fields at the root l
 
 **Note:** Some JSON files are generated by external tools (e.g., `coverage.json` and `coverage_dev_tools.json` by pytest/coverage, located in `development_tools/tests/jsons/`) and may not follow this internal metadata standard. Only files generated by the development tools suite should include this metadata.
 
-For documentation-specific metadata standards, see section 3.1. "Metadata for `.md` documentation files" in [DOCUMENTATION_GUIDE.md](https://github.com/Jacfogel/MHM/blob/main/DOCUMENTATION_GUIDE.md#31-metadata-for-md-documentation-files).
+For documentation-specific metadata standards, see section 3.1. "Metadata for `.md` documentation files" in [documentation guide](https://github.com/Jacfogel/MHM/blob/main/DOCUMENTATION_GUIDE.md#31-metadata-for-md-documentation-files).
 
 ---
 
@@ -564,7 +564,7 @@ if should_exclude_file(file_path, tool_type='analysis', context='production'):
     # Skip this file
 ```
 
-Function-level exclusions (auto-generated code, special methods, test functions) are in `shared/exclusion_utilities.py`. See that module and tests in `development_tools/tool_tests/test_standard_exclusions.py`, `development_tools/tool_tests/test_exclusion_utilities.py` for details.
+Function-level exclusions (auto-generated code, special methods, test functions) are in `shared/exclusion_utilities.py`. See that module and tests in [the standard-exclusion tests](https://github.com/Jacfogel/development-tools/blob/development/tool_tests/test_standard_exclusions.py) and [the exclusion utility tests](https://github.com/Jacfogel/development-tools/blob/development/tool_tests/test_exclusion_utilities.py) for details.
 
 ### 8.5. Code-Level Tool Markers
 
@@ -596,9 +596,9 @@ Markers may sit immediately above decorators or inside the function/class body. 
 
 **Report paths**. The function registry and module dependency generators use `paths.development_docs_dir` for detail reports and `paths.ai_docs_dir` for AI summaries. Set `analyze_function_registry.registry_path` or `analyze_module_dependencies.dependency_doc_path` to override an individual detail report. Relative paths resolve under the selected project root. The analyzers read the same detail paths, and each summary links to its detail report.
 
-**Coverage paths**. Set `coverage.json_dir` for product and development-tools coverage snapshots, the last-good snapshot, and rotated JSON. The Markdown report defaults to the filename shown in [TEST_COVERAGE_REPORT.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/TEST_COVERAGE_REPORT.md), under `paths.development_docs_dir`. Set `coverage.detail_report_path` to override it. Relative paths resolve under the selected project root.
+**Coverage paths**. Set `coverage.json_dir` for product and development-tools coverage snapshots, the last-good snapshot, and rotated JSON. The Markdown report defaults to the filename shown in [test coverage report](https://github.com/Jacfogel/MHM/blob/main/development_docs/TEST_COVERAGE_REPORT.md), under `paths.development_docs_dir`. Set `coverage.detail_report_path` to override it. Relative paths resolve under the selected project root.
 
-**Legacy reporting paths**. Set `legacy_cleanup.detail_report_path` for the Markdown report and `legacy_cleanup.deprecation_inventory_file` for the inventory read by the scanner and report. The report defaults to the filename shown in [LEGACY_REFERENCE_REPORT.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/LEGACY_REFERENCE_REPORT.md) under `paths.development_docs_dir`. Relative paths resolve under the selected project root.
+**Legacy reporting paths**. Set `legacy_cleanup.detail_report_path` for the Markdown report and `legacy_cleanup.deprecation_inventory_file` for the inventory read by the scanner and report. The report defaults to the filename shown in [legacy reference report](https://github.com/Jacfogel/MHM/blob/main/development_docs/LEGACY_REFERENCE_REPORT.md) under `paths.development_docs_dir`. Relative paths resolve under the selected project root.
 
 **Audit summary paths**. Use `status.status_files` for full-repo reports and `status.dev_tools_status_files` for tools-only reports. Each accepts `ai_status`, `ai_priorities`, and `consolidated_report` overrides. The audit and cached status command share these destinations, and report links resolve from the directory containing the report.
 
@@ -614,7 +614,7 @@ Markers may sit immediately above decorators or inside the function/class body. 
 
 **Purpose**: Tools tests must not load the host project's `tests/conftest.py` (Qt, user-data loaders, MHM logging).
 
-**How**: Run them with [`development_tools/pytest.ini`](pytest.ini). Runners pass `-c development_tools/pytest.ini --rootdir=. --confcutdir=development_tools/tool_tests`. `confcutdir` is a CLI option only; do not set it in the INI file because `--strict-config` treats that key as unknown. Helper: [`tests/pytest_isolation.py`](tests/pytest_isolation.py). Host `pytest.ini` ignores `development_tools/tool_tests/` so a default `pytest` at repo root does not mix the suites.
+**How**: Run them with [the tools pytest configuration](https://github.com/Jacfogel/development-tools/blob/development/pytest.ini). Runners pass `-c development_tools/pytest.ini --rootdir=. --confcutdir=development_tools/tool_tests`. `confcutdir` is a CLI option only; do not set it in the INI file because `--strict-config` treats that key as unknown. Helper: [`tests/pytest_isolation.py`](tests/pytest_isolation.py). Host `pytest.ini` ignores `development_tools/tool_tests/` so a default `pytest` at repo root does not mix the suites.
 
 **Commands**:
 ```powershell
@@ -647,7 +647,7 @@ In a development checkout, the Tier 3 test runner and tools coverage use the sam
 
 **Phased migration** (when restructuring): (1) clarify docs + ownership map (this section); (2) compatibility shims if modules move; (3) migrate imports and remove shims. Core CLI entrypoints (`run_development_tools.py`, `audit` tiers) should keep working throughout.
 
-**Phase 2 (evaluation, not yet executed)**: Gate is recorded in [AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md](https://github.com/Jacfogel/MHM/blob/main/archive/AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md) Section 7.7. Before moving files out of `development_tools/config/`, decide which items are true "policy surface" vs runtime/plumbing. Candidate home for runtime-only helpers: a dedicated package (for example `development_tools/shared/runtime_config/`) with **temporary** re-export shims only when required-each shim must follow section 1. "Standards" in [AI_LEGACY_COMPATIBILITY_GUIDE.md](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_LEGACY_COMPATIBILITY_GUIDE.md#1-standards) (inventory, removal plan, no silent long-term duplication). Acceptance: contributors can find config entrypoints within minutes; existing imports keep working until an explicit deprecation window ends.
+**Phase 2 (evaluation, not yet executed)**: Gate is recorded in [AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md](https://github.com/Jacfogel/MHM/blob/main/archive/AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md) Section 7.7. Before moving files out of `development_tools/config/`, decide which items are true "policy surface" vs runtime/plumbing. Candidate home for runtime-only helpers: a dedicated package (for example `development_tools/shared/runtime_config/`) with **temporary** re-export shims only when required-each shim must follow section 1. "Standards" in [ai legacy compatibility guide](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_LEGACY_COMPATIBILITY_GUIDE.md#1-standards) (inventory, removal plan, no silent long-term duplication). Acceptance: contributors can find config entrypoints within minutes; existing imports keep working until an explicit deprecation window ends.
 
 **Pyright config**: Single SSOT is **`[tool.pyright]`** in `pyproject.toml` (IDE / Pylance / default `analyze_pyright`). Nested `development_tools/config/pyrightconfig.json` was removed. **Ruff**: owned `development_tools/config/ruff.toml`; root `.ruff.toml` remains a compatibility mirror. Policy tests: `development_tools/tool_tests/test_pyright_config_paths.py`.
 
@@ -658,7 +658,7 @@ In a development checkout, the Tier 3 test runner and tools coverage use the sam
 
 **AI_PRIORITIES default guidance (tool-suite themes)**
 
-When `PRIORITIES_BRIEF.md` is generated, items that lack explicit "Review for guidance" bullets get defaults from `report_generation.add_priority`. **Tooling and dev-tools-owned signals** point here and to [README.md](README.md) first; **product-wide** work still references `ai_development_docs/AI_*` guides as needed.
+When `PRIORITIES_BRIEF.md` is generated, items that lack explicit "Review for guidance" bullets get defaults from `report_generation.add_priority`. **Tooling and dev-tools-owned signals** point to this guide first; **product-wide** work still references `ai_development_docs/AI_*` guides as needed.
 
 | Theme | Primary procedural docs | Typical JSON / report |
 |--------|-------------------------|------------------------|
@@ -701,7 +701,7 @@ When `PRIORITIES_BRIEF.md` is generated, items that lack explicit "Review for gu
 
 - **TODO sync workflow** (B-010):
   1. Dry-run first: `python development_tools/docs/fix_version_sync.py sync-todo --dry-run` (stdout only; no file edits).
-  2. Human changelog cross-check: confirm each **manual-review** item against [AI_CHANGELOG.md](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_CHANGELOG.md) / [CHANGELOG_DETAIL.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/CHANGELOG_DETAIL.md) before removing anything by hand.
+  2. Human changelog cross-check: confirm each **manual-review** item against [ai changelog](https://github.com/Jacfogel/MHM/blob/main/ai_development_docs/AI_CHANGELOG.md) / [changelog detail](https://github.com/Jacfogel/MHM/blob/main/development_docs/CHANGELOG_DETAIL.md) before removing anything by hand.
   3. Auto-clean only when the dry-run list looks right: `python development_tools/docs/fix_version_sync.py sync-todo --apply` removes auto-cleanable `- [x]` / `- [X]` checklist lines only (never strikethrough/bold completions).
   4. Do **not** combine `--dry-run` and `--apply`. Tiered `audit` also runs a non-apply sync for report signals; use the CLI above for cleanup.
 
@@ -722,14 +722,14 @@ Triage with generated `PRIORITIES_BRIEF.md` / `STATUS_BRIEF.md` / `CONSOLIDATED_
 
 Practical order: (1) Immediate Focus in `PRIORITIES_BRIEF.md`, (2) linked JSON for that item, (3) for module size start with **`module-refactor-candidates`** and for function complexity use `analyze_functions` before manual Radon, (4) for dead-code suspicion use Tier 3 Vulture (min-confidence gated).
 
-**Scripts backlog** (migration/review): Policy, triage, flaky-detector notes, and inventory refresh command live in [scripts/SCRIPTS_GUIDE.md](https://github.com/Jacfogel/MHM/blob/main/scripts/SCRIPTS_GUIDE.md). Residual task notes: [TODO.md](https://github.com/Jacfogel/MHM/blob/main/TODO.md) and archived [AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md](https://github.com/Jacfogel/MHM/blob/main/archive/AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md).
+**Scripts backlog** (migration/review): Policy, triage, flaky-detector notes, and inventory refresh command live in [scripts/SCRIPTS_GUIDE.md](https://github.com/Jacfogel/MHM/blob/main/scripts/SCRIPTS_GUIDE.md). Residual task notes: [todo](https://github.com/Jacfogel/MHM/blob/main/TODO.md) and archived [AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md](https://github.com/Jacfogel/MHM/blob/main/archive/AI_DEV_TOOLS_IMPROVEMENT_PLAN_V6.md).
 
 **Snapshot (refresh when migrating)**:
 
 - **`scripts/flaky_detector.py`**: migrated to tracked `development_tools/tests/flaky_detector.py`; run via `python development_tools/run_development_tools.py flaky-detector`.
 - **`scripts/testing/verify_process_cleanup.py`**: migrated to tracked `development_tools/tests/verify_process_cleanup.py`; run via `python development_tools/run_development_tools.py verify-process-cleanup`.
-- **Inventory**: use the PowerShell recipe in [scripts/SCRIPTS_GUIDE.md](https://github.com/Jacfogel/MHM/blob/main/scripts/SCRIPTS_GUIDE.md) Section 6 for remaining script candidates; record outcomes in V5 Section 3.13-Section 3.14 and [TODO.md](https://github.com/Jacfogel/MHM/blob/main/TODO.md) - do not add standalone markdown inventories.
-- **Non-tool parallel work**: legacy markers and domain coverage follow [LEGACY_REFERENCE_REPORT.md](https://github.com/Jacfogel/MHM/blob/main/development_docs/LEGACY_REFERENCE_REPORT.md) and regenerated `PRIORITIES_BRIEF.md`.
+- **Inventory**: use the PowerShell recipe in [scripts/SCRIPTS_GUIDE.md](https://github.com/Jacfogel/MHM/blob/main/scripts/SCRIPTS_GUIDE.md) Section 6 for remaining script candidates; record outcomes in V5 Section 3.13-Section 3.14 and [todo](https://github.com/Jacfogel/MHM/blob/main/TODO.md) - do not add standalone markdown inventories.
+- **Non-tool parallel work**: legacy markers and domain coverage follow [legacy reference report](https://github.com/Jacfogel/MHM/blob/main/development_docs/LEGACY_REFERENCE_REPORT.md) and regenerated `PRIORITIES_BRIEF.md`.
 
 ## Development tools extensions
 
