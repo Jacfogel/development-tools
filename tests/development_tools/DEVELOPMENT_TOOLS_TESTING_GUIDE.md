@@ -248,3 +248,18 @@ Notes:
 ---
 
 **Note**: For detailed test plan information and test structure, see section 2.2. "Test types" in [TESTING_GUIDE.md](TESTING_GUIDE.md#22-test-types) and section 3. "Fixtures, Utilities, and Safety" in [TESTING_GUIDE.md](TESTING_GUIDE.md#3-fixtures-utilities-and-safety).
+
+## Publishing a reviewed revision
+
+Run the tooling suite from the development branch before publishing. In a clean, disposable checkout of the tools repository, refresh the published branch from the reviewed development commit:
+
+```bash
+git switch published
+git read-tree --reset -u development
+git rm -r -- tool_tests tests/development_tools pytest.ini
+git diff --cached --stat
+git commit -m "Publish reviewed tooling"
+git push origin published
+```
+
+The published tree keeps the runtime test runners in `tests/`. Those runners execute consumers' tests. Verify the runtime by installing the published tree at `development_tools/` in a disposable host checkout and running its CLI help and a quick audit.
