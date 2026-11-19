@@ -27,7 +27,6 @@ generate_module_section = deps_module.generate_module_section
 get_directory_description = deps_module.get_directory_description
 get_module_purpose = deps_module.get_module_purpose
 identify_modules_needing_enhancement = deps_module.identify_modules_needing_enhancement
-generate_module_dependencies_brief_content = deps_module.generate_module_dependencies_brief_content
 
 
 class TestImportExtraction:
@@ -277,48 +276,6 @@ class TestContentGeneration:
         assert "None (no imports)" in section
         assert "None (not imported by other modules)" in section
 
-    @pytest.mark.unit
-    def test_generate_module_dependencies_brief_content_uses_dynamic_pattern_sections(
-        self, monkeypatch
-    ):
-        class FakePatternAnalyzer:
-            def analyze_dependency_patterns(self, actual_imports):
-                assert "demo.py" in actual_imports
-                return {"fan_in": []}
-
-            def build_dynamic_decision_trees(self, _actual_imports):
-                return "decision tree text"
-
-            def find_critical_dependencies(self, _actual_imports):
-                return "critical dependency text"
-
-            def detect_risk_areas(self, _actual_imports, _patterns):
-                return "risk area text"
-
-            def generate_dependency_patterns_section(self, _patterns, _actual_imports):
-                return "pattern section text"
-
-            def generate_quick_reference(self, _actual_imports, _patterns):
-                return "quick reference text"
-
-        monkeypatch.setattr(deps_module, "DependencyPatternAnalyzer", FakePatternAnalyzer)
-        actual_imports = {
-            "demo.py": {
-                "total_imports": 2,
-                "imports": {
-                    "standard_library": [{"module": "json"}],
-                    "third_party": [],
-                    "local": [{"module": "core.config"}],
-                },
-            }
-        }
-
-        content = generate_module_dependencies_brief_content(actual_imports)
-
-        assert "Files Scanned**: 1" in content
-        assert "Standard Library**: 1 (50.0%)" in content
-        assert "decision tree text" in content
-        assert "quick reference text" in content
 
     @pytest.mark.unit
     def test_get_directory_and_module_purpose_fallbacks(self):

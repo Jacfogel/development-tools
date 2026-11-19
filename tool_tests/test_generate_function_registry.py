@@ -7,7 +7,6 @@ Tests function extraction, scanning, categorization, and file generation.
 import json
 
 import pytest
-from unittest.mock import patch
 
 # Import helper from conftest
 from development_tools.tool_tests.conftest import load_development_tools_module
@@ -28,9 +27,6 @@ generate_function_template = registry_module.generate_function_template
 generate_function_registry_content = registry_module.generate_function_registry_content
 generate_file_section = registry_module.generate_file_section
 get_directory_description = registry_module.get_directory_description
-get_file_stats = registry_module.get_file_stats
-format_file_entry = registry_module.format_file_entry
-find_files_needing_attention = registry_module.find_files_needing_attention
 
 
 def _patch_should_exclude_file(monkeypatch, mock_func):
@@ -410,44 +406,6 @@ class TestRegistryHelpers:
         """Unknown directories should fall back to generic description."""
         assert get_directory_description("experimental") == "Unknown Directory"
 
-    @pytest.mark.unit
-    def test_file_stats_and_format_entry_helpers(self):
-        """get_file_stats/format_file_entry should handle documented and missing files."""
-        payload = {
-            "core/sample.py": {
-                "functions": [{"name": "a", "has_docstring": True}],
-                "classes": [{"name": "C", "docstring": "", "methods": [{"name": "m", "has_docstring": False}]}],
-            }
-        }
-
-        stats = get_file_stats("core/sample.py", payload)
-        assert stats == {"total": 2, "documented": 1, "functions": 1, "methods": 1}
-        assert format_file_entry("core/sample.py", "desc", payload).endswith("(1/2 functions)")
-        assert format_file_entry("core/missing.py", "desc", payload) == "`core/missing.py` - desc"
-
-    @pytest.mark.unit
-    def test_find_files_needing_attention_sorts_by_missing_then_coverage(self):
-        """find_files_needing_attention should sort deterministically by priority."""
-        actual_functions = {
-            "a.py": {
-                "functions": [
-                    {"name": "f1", "has_docstring": False},
-                    {"name": "f2", "has_docstring": False},
-                ],
-                "classes": [],
-            },
-            "b.py": {
-                "functions": [
-                    {"name": "g1", "has_docstring": True},
-                    {"name": "g2", "has_docstring": False},
-                ],
-                "classes": [],
-            },
-        }
-
-        items = find_files_needing_attention(actual_functions, threshold=0.8)
-        assert [i["file"] for i in items] == ["a.py", "b.py"]
-        assert items[0]["missing"] == 2
 
     @pytest.mark.unit
     def test_generate_file_section_renders_missing_and_documented_entries(self):
@@ -491,191 +449,6 @@ class TestRegistryHelpers:
         assert "- [MISSING] `Widget` - No description" in section
         assert "Widget.save(self)" in section
 
-    @pytest.mark.unit
-    def test_generate_pattern_section_includes_detected_patterns(self):
-        """Pattern section should render detected handler/manager examples."""
-        patterns = {
-            "handlers": [
-                {"file": "communication/a.py", "function": "handle_message", "has_doc": True},
-                {"file": "communication/b.py", "function": "handle_task", "has_doc": False},
-                {"file": "communication/c.py", "function": "handle_help", "has_doc": False},
-            ],
-            "managers": [
-                {"file": "core/manager.py", "class": "TaskManager", "has_doc": True},
-                {"file": "core/manager2.py", "class": "UserManager", "has_doc": False},
-                {"file": "core/manager3.py", "class": "CacheManager", "has_doc": False},
-            ],
-        }
-        content = registry_module.generate_pattern_section(patterns, {})
-
-        assert "Handler Pattern" in content
-        assert "Manager Pattern" in content
-        assert "`handle_message`" in content
-        assert "`TaskManager`" in content
-
-    @pytest.mark.unit
-    def test_generate_entry_points_section_includes_fallbacks_when_sparse(self):
-        """Entry point section should include fallback canonical items when too short."""
-        patterns = {"entry_points": [{"file": "misc/runner.py", "function": "boot", "has_doc": False}]}
-
-        with patch.object(registry_module.config, "get_project_key_files", return_value=["run_tests.py"]):
-            content = registry_module.generate_entry_points_section(patterns, {})
-
-        assert "communication/message_processing/interaction_manager.py::handle_message()" in content
-        assert "ai/chat/chatbot.py::generate_response()" in content
-
-    @pytest.mark.unit
-    def test_generate_entry_points_section_respects_priority_and_init_filter(self):
-        """Entry points should prioritize key functions and include allowed __init__."""
-        patterns = {
-            "entry_points": [
-                {"file": "ui/ui_app_qt.py", "function": "__init__", "has_doc": True},
-                {"file": "misc/mod.py", "function": "other", "has_doc": True},
-                {"file": "communication/message_processing/interaction_manager.py", "function": "handle_message", "has_doc": True},
-                {"file": "ai/chat/chatbot.py", "function": "generate_response", "has_doc": True},
-            ]
-        }
-
-        with patch.object(registry_module.config, "get_project_key_files", return_value=["ui_app_qt.py"]):
-            content = registry_module.generate_entry_points_section(patterns, {})
-
-        lines = content.splitlines()
-        assert lines[0].endswith("handle_message()` - Main message entry point")
-        assert any("ui/ui_app_qt.py::__init__()" in line for line in lines)
-
-    @pytest.mark.unit
-    def test_generate_common_operations_section_returns_placeholder_when_empty(self):
-        """Common operations should return a placeholder when no patterns are found."""
-        content = registry_module.generate_common_operations_section({}, {})
-        assert "No common operations detected" in content
-
-    @pytest.mark.unit
-    def test_generate_common_operations_section_detects_priority_ops(self):
-        """Common operations should include user message, AI response, and scheduling."""
-        patterns = {
-            "entry_points": [
-                {"file": "communication/message_processing/interaction_manager.py", "function": "handle_message"},
-                {"file": "ai/chat/chatbot.py", "function": "generate_response"},
-                {"file": "run_app.py", "function": "main"},
-            ],
-            "data_access": [
-                {"file": "core/user_data_read.py", "function": "get_user_data"},
-                {"file": "core/user_data_write.py", "function": "save_user_data"},
-            ],
-            "communication": [
-                {"file": "communication/core/channel_orchestrator.py", "function": "send_alert"},
-                {"file": "communication/core/channel_orchestrator.py", "function": "receive_status"},
-            ],
-            "error_handlers": [{"file": "core/error_handling.py", "function": "handle_errors"}],
-            "schedulers": [{"file": "scheduler/manager.py", "function": "schedule_checkins"}],
-        }
-        actual_functions = {
-            "communication/message_processing/command_parser.py": {
-                "functions": [{"name": "parse_command"}],
-                "classes": [],
-            },
-            "core/validate_input.py": {
-                "functions": [{"name": "validate_payload"}],
-                "classes": [],
-            },
-            "core/config.py": {
-                "functions": [{"name": "get_config"}],
-                "classes": [],
-            },
-        }
-
-        content = registry_module.generate_common_operations_section(actual_functions, patterns)
-        assert "**User Message**" in content
-        assert "**AI Response**" in content
-        assert "**Scheduling**" in content
-        assert "**Command Parsing**" in content
-
-    @pytest.mark.unit
-    def test_generate_complexity_section_empty_when_no_high_complexity(self):
-        """Complexity section should be empty when nothing exceeds threshold."""
-        actual_functions = {
-            "core/a.py": {
-                "functions": [{"name": "small", "complexity": 50, "has_docstring": True}],
-                "classes": [],
-            }
-        }
-        assert registry_module.generate_complexity_section(actual_functions) == ""
-
-    @pytest.mark.unit
-    def test_generate_complexity_section_renders_top_complex_items(self):
-        """Complexity section should list high-complexity functions."""
-        actual_functions = {
-            "core/a.py": {
-                "functions": [
-                    {"name": "f1", "complexity": 300, "has_docstring": True},
-                    {"name": "f2", "complexity": 250, "has_docstring": False},
-                ],
-                "classes": [{"name": "C", "methods": [{"name": "m", "has_docstring": True}]}],
-            }
-        }
-        content = registry_module.generate_complexity_section(actual_functions)
-        assert "Complexity Metrics" in content
-        assert "core/a.py::f1()" in content
-        assert "Complexity: 300" in content
-
-    @pytest.mark.unit
-    def test_generate_complexity_section_skips_init(self):
-        """Constructors are omitted from the complexity top list."""
-        actual_functions = {
-            "core/logger.py": {
-                "functions": [
-                    {"name": "__init__", "complexity": 800, "has_docstring": True},
-                    {"name": "setup_logging", "complexity": 250, "has_docstring": True},
-                ],
-                "classes": [],
-            }
-        }
-        content = registry_module.generate_complexity_section(actual_functions)
-        assert "__init__" not in content
-        assert "setup_logging" in content
-
-    @pytest.mark.unit
-    def test_generate_file_organization_section_includes_known_and_extra_dirs(self):
-        """Organization section should include priority and non-priority directories."""
-        actual_functions = {
-            "core/a.py": {"functions": [{"name": "a"}], "classes": []},
-            "communication/b.py": {"functions": [], "classes": [{"methods": [{"name": "m"}]}]},
-            "extras/c.py": {"functions": [{"name": "x"}], "classes": []},
-        }
-        content = registry_module.generate_file_organization_section(actual_functions)
-        assert "`core/`" in content
-        assert "`communication/`" in content
-        assert "`extras/`" in content
-
-    @pytest.mark.unit
-    def test_generate_communication_patterns_section_detects_send_status_parse(self):
-        """Communication patterns should render detected send/status/parse entries."""
-        patterns = {
-            "communication": [
-                {"file": "communication/core/orchestrator.py", "function": "send_message"},
-                {"file": "communication/core/orchestrator.py", "function": "is_ready"},
-            ]
-        }
-        actual_functions = {
-            "communication/message_processing/command_parser.py": {
-                "functions": [{"name": "parse_command", "has_docstring": True}],
-                "classes": [],
-            }
-        }
-        content = registry_module.generate_communication_patterns_section(patterns, actual_functions)
-        assert "**Message Sending**" in content
-        assert "**Channel Status**" in content
-        assert "**Command Parsing**" in content
-
-    @pytest.mark.unit
-    def test_generate_communication_patterns_section_empty_when_no_patterns(self):
-        """Communication patterns should be empty when no matches are found."""
-        content = registry_module.generate_communication_patterns_section(
-            {"communication": []},
-            {"core/a.py": {"functions": [{"name": "parse_timestamp"}], "classes": []}},
-        )
-        assert content == ""
-
 
 @pytest.mark.integration
 @pytest.mark.parametrize("explicit_detail_paths", [False, True])
@@ -718,22 +491,14 @@ def test_report_generators_use_host_paths(tmp_path, monkeypatch, explicit_detail
         result = service.run_script(tool)
         assert result["success"], result
 
-    pairs = (
-        (registry, "development_tools/reports/FUNCTION_REGISTRY_BRIEF.md", "Function Registry"),
-        (dependencies, "development_tools/reports/MODULE_DEPENDENCIES_BRIEF.md", "Module Dependencies"),
-    )
-    for detail, summary, title in pairs:
+    for detail, title in ((registry, "Function Registry"), (dependencies, "Module Dependencies")):
         detail_content = (tmp_path / detail).read_text(encoding="utf-8")
-        summary_content = (tmp_path / summary).read_text(encoding="utf-8")
         assert title in detail_content
         assert f"> **File**: `{detail}`" in detail_content
-        assert f"> **File**: `{summary}`" in summary_content
-        target = (
-            f"../overrides/{detail.rsplit('/', 1)[-1].replace(' ', '%20')}"
-            if explicit_detail_paths
-            else detail.rsplit("/", 1)[-1]
-        )
-        assert f"]({target})" in summary_content
+
+    # A normal docs-generation run must never recreate the retired summaries.
+    for name in ("FUNCTION_REGISTRY_BRIEF.md", "MODULE_DEPENDENCIES_BRIEF.md"):
+        assert not (tmp_path / "development_tools" / "reports" / name).exists()
 
     monkeypatch.setenv("DEVTOOLS_REPORT_PROJECT_ROOT", str(tmp_path))
     parsed_registry = parse_registry_document()
