@@ -4,31 +4,24 @@ from pathlib import Path
 
 import pytest
 
-from development_tools.tool_tests.conftest import load_development_tools_module, temp_project_copy_paths
+from development_tools.tool_tests.conftest import load_development_tools_module
 
 version_sync_module = load_development_tools_module("docs.fix_version_sync")
 
 
-@pytest.fixture(scope="module")
-def temp_project_copy():
-    """One demo-tree copy per module (avoids ~5s copytree setup per test)."""
-    fixture_path = Path(__file__).parents[2] / "tests" / "fixtures" / "development_tools_demo"
-    yield from temp_project_copy_paths(fixture_path.resolve())
-
-
 @pytest.mark.unit
 def test_trim_changelog_prepends_new_entries_to_archive_top(
-    temp_project_copy, monkeypatch
+    tmp_path, monkeypatch
 ):
     """Newly trimmed entries should be prepended before existing archive entries."""
-    monkeypatch.chdir(temp_project_copy)
+    monkeypatch.chdir(tmp_path)
 
-    ai_docs = Path("ai_development_docs")
-    archive_dir = Path("archive")
+    ai_docs = Path("development_docs")
+    archive_dir = Path("development_docs/changelog_history")
     ai_docs.mkdir(parents=True, exist_ok=True)
     archive_dir.mkdir(parents=True, exist_ok=True)
 
-    changelog = ai_docs / "AI_CHANGELOG.md"
+    changelog = ai_docs / "CHANGELOG_BRIEF.md"
     changelog.write_text(
         "\n".join(
             [
@@ -47,7 +40,7 @@ def test_trim_changelog_prepends_new_entries_to_archive_top(
         encoding="utf-8",
     )
 
-    archive = archive_dir / "AI_CHANGELOG_ARCHIVE.md"
+    archive = archive_dir / "CHANGELOG_BRIEF_ARCHIVE.md"
     archive.write_text(
         "\n".join(
             [
@@ -63,7 +56,7 @@ def test_trim_changelog_prepends_new_entries_to_archive_top(
         encoding="utf-8",
     )
 
-    result = version_sync_module.trim_ai_changelog_entries(days_to_keep=30, max_entries=15)
+    result = version_sync_module.trim_changelog_entries(days_to_keep=30, max_entries=15)
     assert isinstance(result, dict)
     assert result.get("archive_created") is True
 

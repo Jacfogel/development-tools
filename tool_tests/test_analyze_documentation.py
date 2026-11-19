@@ -248,7 +248,7 @@ to be filled: placeholder
             "development_docs/CHANGELOG_DETAIL.md": (
                 "- TODO: Moved headless issues from Low to Medium.\n"
             ),
-            "ai_development_docs/AI_CHANGELOG.md": "Placeholder TODO now means `TODO:`.\n",
+            "development_docs/CHANGELOG_BRIEF.md": "Placeholder TODO now means `TODO:`.\n",
         }
         assert detect_placeholders(docs) == []
 

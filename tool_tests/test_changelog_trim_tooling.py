@@ -37,16 +37,16 @@ def test_check_and_trim_changelog_entries_skips_trim_when_within_limit(
         logger_mock,
     )
 
-    ai_docs = Path("ai_development_docs")
+    ai_docs = Path("development_docs")
     ai_docs.mkdir(parents=True, exist_ok=True)
-    _write_recent_changes(ai_docs / "AI_CHANGELOG.md", entry_count=10)
+    _write_recent_changes(ai_docs / "CHANGELOG_BRIEF.md", entry_count=10)
 
     service._check_and_trim_changelog_entries()
 
     info_messages = [call.args[0] for call in logger_mock.info.call_args_list]
     debug_messages = [call.args[0] for call in logger_mock.debug.call_args_list]
     assert any("Changelog check:" in msg for msg in debug_messages)
-    assert not any("Created archive: archive/AI_CHANGELOG_ARCHIVE.md" in msg for msg in info_messages)
+    assert not any("Created archive: development_docs/changelog_history/CHANGELOG_BRIEF_ARCHIVE.md" in msg for msg in info_messages)
 
 
 @pytest.mark.unit
@@ -63,15 +63,15 @@ def test_check_and_trim_changelog_entries_trims_when_over_limit(
         logger_mock,
     )
 
-    ai_docs = Path("ai_development_docs")
+    ai_docs = Path("development_docs")
     ai_docs.mkdir(parents=True, exist_ok=True)
-    _write_recent_changes(ai_docs / "AI_CHANGELOG.md", entry_count=20)
+    _write_recent_changes(ai_docs / "CHANGELOG_BRIEF.md", entry_count=20)
 
     service._check_and_trim_changelog_entries()
 
-    archive_file = Path("archive/AI_CHANGELOG_ARCHIVE.md")
+    archive_file = Path("development_docs/changelog_history/CHANGELOG_BRIEF_ARCHIVE.md")
     assert archive_file.exists()
     log_messages = [call.args[0] for call in logger_mock.info.call_args_list]
     assert any("Trimmed " in msg and "old changelog entries" in msg for msg in log_messages)
     assert any("Changelog entries kept: 15" in msg for msg in log_messages)
-    assert any("Created archive: archive/AI_CHANGELOG_ARCHIVE.md" in msg for msg in log_messages)
+    assert any("Created archive: development_docs/changelog_history/CHANGELOG_BRIEF_ARCHIVE.md" in msg for msg in log_messages)

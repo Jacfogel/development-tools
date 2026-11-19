@@ -11,9 +11,9 @@ from development_tools.docs.fix_version_sync import (
 
 def _write_required_files(tmp_path: Path, todo_content: str) -> None:
     (tmp_path / "TODO.md").write_text(todo_content, encoding="utf-8")
-    changelog_dir = tmp_path / "ai_development_docs"
+    changelog_dir = tmp_path / "development_docs"
     changelog_dir.mkdir(parents=True, exist_ok=True)
-    (changelog_dir / "AI_CHANGELOG.md").write_text(
+    (changelog_dir / "CHANGELOG_BRIEF.md").write_text(
         "# AI Changelog\n", encoding="utf-8"
     )
 
